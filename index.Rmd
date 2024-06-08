@@ -1,0 +1,58 @@
+---
+title: "Adaptive and Bayesian Methods for Clinical Trial Design Short Course"
+output: 
+  html_document:
+    includes:
+      in_header: 
+        - header.html
+        - hero-image.html
+        - header-tracker.html
+---
+
+This page contains materials by [Alex Kaizer](https://www.alexkaizer.com) for the short course titled "Adaptive and Bayesian Methods for Clinical Trial Design Short Course" held for the 2024 WNAR/IMS/Graybill Annual Meeting from June 9-13, 2024. It covers a variety of modules relating to adaptive clinical trial designs and considerations over a full-day short course.
+
+If you are interested in having this short course presented at your university, your organization, or at another conference please reach out via email. The material is meant to be modular and can be customized for varying lengths, audiences, and interests.
+
+
+<br>
+
+### Acknowledgements 
+
+I want to acknowledge the following collaborators, without whom this work wouldn't be possible:
+
+<br>
+
+#### Multi-Source Exchangeability Models
+
+* [Joseph Koopmeiners, University of Minnesota](https://directory.sph.umn.edu/bio/sph-a-z/joseph-koopmeiners)
+* [Brian Hobbs, The University of Texas at Austin](https://dellmed.utexas.edu/directory/brian-hobbs)
+
+<br>
+
+#### [Adaptive Clinical Trials Overview Paper](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/recent-innovations-in-adaptive-trial-designs-a-review-of-design-opportunities-in-translational-research/614EAFEA5E89CA035E82E152AF660E5D?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark)
+
+* Hayley Belli, New York University
+* Zhongyang Ma, New York University
+* Andrew Nicklawsky, University of Colorado Anschutz Medical Campus
+* Samantha Roberts, University of Colorado Anschutz Medical Campus
+* Jessica Wild, University of Colorado Anschutz Medical Campus
+* Adane Wogu, University of Colorado Anschutz Medical Campus
+* Mengli Xiao, University of Colorado Anschutz Medical Campus
+* Roy Sabo, Virginia Commonwealth University
+
+<br>
+
+#### [Interim Analyses in Trials Overview Paper](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/guidance-on-interim-analysis-methods-in-clinical-trials/5051FDCF5284970B3DB01FE609AAA4C2?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark)
+
+* Jody Ciolino, Northwestern University
+* Lauren Balmert Bonner, Northwestern University
+
+<br>
+
+#### [Guide to Bayesian Analyses in Clinical Research Overview Paper](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/practical-guide-to-adopting-bayesian-analyses-in-clinical-research/CF6C017318CD5431C98EEFE37DBB6063?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark)
+
+* Lauren Gunn-Sandell, University of Colorado Anschutz Medical Campus
+* Edward Bedrick, University of Arizona
+* Jacob Hutchins, University of Minnesota
+* Aaron Berg, University of Minnesota
+* Nichole Carlson, University of Colorado Anschutz Medical Campus

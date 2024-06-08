@@ -1,0 +1,51 @@
+name: "Adaptive and Bayesian Methods for Clinical Trial Design Short Course"
+output_dir: "."
+navbar:
+  title: "Alex Kaizer"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Short Course"
+      menu:
+        - text: "Intro and Welcome"
+          href: 0_intro.html
+        - text: "Basics of Clinical Trials"
+          href: 1_intro_clinical_trials.html
+        - text: "Bayesian 101"
+          href: 2_intro_bayesian.html
+        - text: "Interim Monitoring"
+          href: 3_interim_monitoring.html
+        - text: "Sample Size Re-Estimation"
+          href: 4_sample_size_reestimation.html
+        - text: "Adaptive Enrichment"
+          href: 5_adaptive_enrichment.html
+        - text: "Treatment Arm Selection"
+          href: 6_treatment_arm_selection.html
+        - text: "Adaptive Randomization"
+          href: 7_adaptive_randomization.html
+        - text: "Bayesian Information Sharing"
+          href: 8_bayesian_information_sharing.html
+        - text: "Master Protocols"
+          href: 9_master_protocols.html
+        - text: "Seamless Designs"
+          href: 10_seamless_designs.html
+  right:
+    - icon: fa-envelope fa-lg
+      href: mailto:alex.kaizer@cuanschutz.edu
+    - icon: ai-google-scholar ai-lg
+      href: https://scholar.google.com/citations?user=ICpH74EAAAAJ&hl=en
+    - icon: ai-cv ai-lg
+      href: https://www.alexkaizer.com/files/Alex_CV.pdf
+    - icon: fab fa-github fa-lg
+      href: http://github.com/alexbiostats
+    - icon: fab fa-twitter fa-lg
+      href: https://twitter.com/AlexBiostats
+    - icon: fab fa-linkedin fa-lg
+      href: https://www.linkedin.com/in/alex-kaizer/
+output:
+  html_document:
+    theme: flatly
+    css: 'styles.css'
+    include:
+      in_header: 
+         - 'header.html'

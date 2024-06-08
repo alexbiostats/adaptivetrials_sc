@@ -1,0 +1,560 @@
+---
+title: "Sample Size Re-Estimation"
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE
+)
+```
+
+
+# Overview
+
+Oftentimes our power calculations represent our best guess at a realistic treatment effect, but even using previous studies or extensive clinical/scientific background can still result in uncertainty. In this module we discuss how we can incorporate re-estimation procedures during the trial to better ensure we enroll sufficient participants to detect the observed effect.
+
+
+# Slide Deck
+
+<iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/4664c44f42e147b1bebe71608bda8c88" title="Sample Size Re-Estimation" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+
+&nbsp;
+
+You can also download the [original PowerPoint file](./files/Slides/4_sample_size_reestimation.pptx).
+
+
+# Code Examples in R
+
+A selection of packages that may be helpful in implementing a re-estimation procedure include:
+
+* [`blindrecalc`](https://cran.r-project.org/web/packages/blindrecalc/index.html): a package for *blinded* sample re-estimation based on estimating nuisance parameters
+* [`rpact`](https://www.rpact.org/): a package for confirmatory adaptive clinical trial design, simulation, and analysis; includes functions for combination testing for use in unblinded designs
+* [`gsDesign`](https://keaven.github.io/gsDesign/): includes the `ssrCP()` function for unblinded re-estimation based on conditional power
+* [`esDesign`](https://cran.r-project.org/web/packages/esDesign/): looks at adaptive enrichment designs with sample size re-estimation
+
+
+## Blinded Example with Binary Outcome
+
+In our first example we observe how the `blindrecalc` package can be used for a study with a binary outcome. We will use a chi-squared test as our motivating example, largely following the steps from their helpful [R Journal paper](https://journal.r-project.org/articles/RJ-2022-001/RJ-2022-001.pdf).
+
+First we set up our design as the chi-squared test using `setupChiSquare()`. In this example we are testing a one-sided hypothesis where $H_1\colon p_1 > p_2$ with $\alpha=0.025$, $\beta=0.2$ (i.e., power of 80%), and we are interested in detecting a difference between two groups of 20% (i.e., $\delta=0.2$).
+
+We can then estimate the number needed in a fixed sample design using `n_fix()`. Here the nuisance parameter represents the average of the two groups. We can then estimate the $N$ needed overall with $N/2$ in each randomized group to detect a difference of 20%.
+
+```{r}
+library(blindrecalc)
+
+# Compare basic functions
+design <- setupChiSquare(alpha = 0.025, beta = 0.2, delta = 0.2, alternative = "greater")
+n_fix(design, nuisance = c(0.2, 0.3, 0.4, 0.5))
+```
+
+We can verify these sample sizes are analogous to the `power.prop.test()` function in base R:
+
+```{r}
+### Check that power.prop.test matches n_fix (which it does)
+## round up N for each group, multiple by 2 to match overall sample size from n_fix
+
+# nuisance 0.2
+a1 <- ceiling(power.prop.test(p1=0.1,p2=0.3,sig.level=0.025,power=0.8, alternative='o')$n)*2
+
+# nuisance 0.3
+a2 <- ceiling(power.prop.test(p1=0.2,p2=0.4,sig.level=0.025,power=0.8, alternative='o')$n)*2
+
+# nuisance 0.4
+a3 <- ceiling(power.prop.test(p1=0.3,p2=0.5,sig.level=0.025,power=0.8, alternative='o')$n)*2
+
+# nuisance 0.5
+a4 <- ceiling(power.prop.test(p1=0.4,p2=0.6,sig.level=0.025,power=0.8, alternative='o')$n)*2
+
+# print sample sizes
+c(a1,a2,a3,a4)
+```
+Let's focus on the `nusiance=0.2` case. We can examine the impact on our design if we observe other nuisance parameters even though we anticipated 0.2. The `toer()` function allows us to estimate the type I error rate we may encounter if we do or do not use blinded re-estimation:
+
+```{r toer-blindrecalc, cache=T}
+design <- setupChiSquare(alpha = 0.025, beta = 0.2, delta = 0.2, alternative = "greater")
+n <- n_fix(design, nuisance = 0.2) # N = 124 total (62 per group)
+p <- seq(0.2, 0.6, by = 0.1)
+toer_fix <- toer(design, n1 = n, nuisance = p, recalculation = FALSE)
+toer_ips <- toer(design, n1 = n/2, nuisance = p, recalculation = TRUE)
+
+t1e_tab <- rbind( "No SSR" = toer_fix, "SSR at 1/2 Enrolled" = toer_ips)
+colnames(t1e_tab) <- p
+t1e_tab
+```
+By comparing these type I error rates, we see that there can be an inflation to our desired $\alpha=0.025$ due to observing different averages between our two groups (i.e., the nuisance parameters reflected by the column headers). With blinded SSR, we see better control of the type I error rate.
+
+We can use the similar `pow()` to estimate the power under our design with varying nuisance parameters:
+
+```{r pow-blindrecalc, cache=T}
+pow_fix <- pow(design, n1 = n, nuisance = p, recalculation = FALSE)
+pow_ips <- pow(design, n1 = n/2, nuisance = p, recalculation = TRUE)
+
+pow_tab <- rbind( "No SSR" = pow_fix, "SSR at 1/2 Enrolled" = pow_ips)
+colnames(pow_tab) <- p
+pow_tab
+```
+For power we see that SSR maintains approximately 80% power, but without SSR the power decreases as or nuisance parameter grows.
+
+We can also plot the distribution of sample sizes that would occur at different nuisance parameters to evaluate our potential risk of having a much larger sample size:
+
+```{r}
+n_dist(design, n1 = n/2, nuisance = p, plot = TRUE)
+```
+
+In this figure above we see that if our nuisance parameter is actually 0.2 as assumed for the power calculation, or sample size re-estimation could range from 62 to 184 versus our planned $N=124$. However, this does assume we allow for sample size reductions and have no limit on the maximum increase. If our guess of the nuisance parameter is 0.5, we see the largest increase in our expected sample size up to 191.8, with a range of 154 to 194.
+
+
+
+## Unblinded Conditional Power Example with Binary Outcome
+
+The `gsDesign` package includes the `ssrCP()` which allows us to implement an *unblinded* sample size re-estimation procedure. Here we continue our previous example using a binary outcome. In this case we will incorporate traditional group sequential O'Brien-Fleming boundaries for interim monitoring for efficacy. This means our sample size will also be adjusted relative to a fixed design to account for the use of the traditional GSD (this is in contrast to alpha-spending boundaries that are OBF-like, where the sample size remains fixed).
+
+First, we must establish the design type based on the `gsDesign()` function before extending to a conditional power design with `ssrCP()`:
+
+```{r}
+library(gsDesign) # load package
+
+x <- gsDesign(
+  k = 2, # number of analyses planned, including interim and final
+  n.fix = 196, # sample size for a fixed design with no interim
+  timing = 0.5, # timing of interm analyses 
+  test.type=2, # 6 options covering one- vs. two-sided and symmetric vs. asymmetric boundaries; 2 is a two-sided symmetric approach
+  alpha = 0.025, # one-sided type I error rate
+  beta = 0.2, # type II error rate (i.e., power=1-beta)
+  delta0 = 0, # null hypothesis parameter (i.e., no difference)
+  delta1 = 0.2, # alternative hypothesis parameter (i.e., difference we wish to detect)
+  sfu='OF' ) # alpha-spending for efficacy monitoring
+
+# plot stopping boundaries
+plot(x)
+```
+
+The plot shows our stopping boundaries for our two-sided test, with the final critical value being 1.98 (versus 1.96 in a fixed design without interim monitoring), as well as an increase from $N=196$ to $N=198$.
+
+We can then extend this design to a conditional power design based on an observed test statistic at the end of our first stage. Here we assume we observed $Z=1.6$:
+
+```{r}
+# extend design to a conditional power design
+xx <- ssrCP(x = x, # provide design used
+            z1 = 1.6, # enter observed test statistic
+            overrun = 0, # can note how many participants are enrolled but not included in the interim analysis
+            beta = 0.2, # targeted type II error for SSR (i.e., targeted power=1-beta)
+            cpadj = c(0.5,0.8), # range of conditional powers for which SSR is to be performed, otherwise N from original design used
+            maxinc = 2, # argument limiting maximum fold-increase from planned max N (e.g., 2 times)
+            z2 = z2NC) # combination function to combine stage 1 and stage 2 results; z2NC=inverse normal combination test, z2Z=sufficient stat for complete data, z2Fisher=Fisher's combination test
+
+# show immediately relevant information
+xx$dat
+```
+
+From the `ssrCP` documentation, we see these values represent:
+
+* z1: input z1 values, 
+* z2: computed cutoffs for the standard normal test statistic based solely on stage 2 data
+* n2: stage 2 sample size (however, based on other functions I believe this may be the maximum sample size to enroll, so we need to take n2-n1)
+* CP: stage 2 conditional power 
+* theta: standardize effect size used for conditional power calculation 
+* delta: the natural parameter value corresponding to theta The relation between theta and delta is determined by the delta0 and delta1 values from x: delta = delta0 + theta(delta1-delta0).
+
+The most important summary is the re-estimated sample size of $N=259.0207$ which rounds up to $N=260$, resulting in a need to enroll $N_2=260-99=161$ in stage 2 instead of the original $N_2 = 198-99=99$. Overall, this results in a total sample size of $N_1+N_2=99+161=260$, which is less than the two times inflation allowed by `maxinc=2` (i.e., up to $198\times2 = 396$ is allowed).
+
+The other useful summary is the `z2=1.19651`, which represents that we need to observe a test statistic at least this large for our inverse normal combination test to be significant.
+
+If we assume we enroll the 161 additional participants and observe $Z_2=1.3$, we would have a normal combination test of 
+
+\[ \frac{Z_1 + Z_2}{\sqrt{2}} = \frac{1.6 +1.3}{\sqrt{2}} = 2.05 > 1.96 = Z_{0.975} = Z_{1-\alpha/2} \]
+
+Therefore, we would reject the null hypothesis and conclude we found an effect.
+
+
+# Simulation Study
+
+For our simulation study, let's assume we are interested in designing a study where we wish to reduce the rate of an adverse event by exploring a new approach to a procedure:
+
+* $H_0\colon p_1 = p_2$ versus $H_1\colon p_1 < p_2$ (i.e., one-sided hypothesis)
+* $p_1 = p_{trt} = 0.1$ and $p_2 = p_{con} = 0.25$ for our alternative hypothesis of interest (i.e., reducing the rate of adverse events from 25% to 10%)
+* $\alpha=0.025$
+* $\beta=0.8$
+
+For a fixed sample design, using `power.prop.test()`, we can identify our sample size to enroll:
+
+```{r}
+power.prop.test(p1=0.1,p2=0.25,sig.level=0.025,power=0.8, alternative='o')
+```
+Given $n=100$ per arm, we would plan for a study enrolling a total of $N_{total}=200$.
+
+We will evaluate five scenarios to determine the effect of sample size re-estimation:
+
+* Scenario 1: Null with $p_1 = p_{trt} = 0.25$ and $p_2 = p_{con} = 0.25$
+* Scenario 2: Null with $p_1 = p_{trt} = 0.175$ and $p_2 = p_{con} = 0.175$, where the null rate is the nuisance parameter (i.e., $\frac{0.1+0.25}{2}=0.175}$)
+* Scenario 3: Alternative with $p_1 = 0.1$ and $p_2 = 0.25$
+* Scenario 4: Alternative with $p_1 = 0.15$ and $p_2 = 0.25$
+* Scenario 5: Alternative with $p_1 = 0.15$ and $p_2 = 0.30$ (i.e., maintaining the $\delta$ but for different effects)
+
+
+## Blinded Re-estimation with Binary Outcome Simulation
+
+We first implement our blinded re-estimation procedure. We will compare three strategies:
+
+1. Blinded SSR where we will allow for a smaller than planned sample size if indicated (i.e., if stage 2 needs fewer than 100 more participants, we will enroll that number)
+2. Blinded SSR where we will continue with the planned sample size if the re-estimation indicates fewer participants could be needed (i.e., if stage 2 needs fewer than 100 more participants, we will still enroll 100)
+3. A fixed sample design with no SSR
+
+The code is hidden, but can be shown if desired. We will summarize the rejection rate and average (SD) sample size across 1,000 simulation trials.
+
+```{r blindedSSR-binary-sim, class.source = 'fold-hide', cache=T, warning=F}
+sim_list <- list( c(0.25, 0.25), c(0.175,0.175), c(0.1, 0.25), c(0.15, 0.25), c(0.15, 0.3))
+
+# Create objects to store results in
+blinded_res <- blinded_n2_res <- fixed_res <- matrix(nrow=5, ncol=3, dimnames = list(c('Null 25 v 25','Null 17.5 v 17.5','Alt 10 v 25','Alt 15 v 25','Alt 15 v 30'), c('Rej_Rate','ESS','ESS_SD')))
+
+# Set simulation parameters
+n <- 200 # total sample size based on fixed sample
+n1 <- 100 # sample size to enroll for stage 1
+delta <- 0.15 # expected effect size under H1 from power calculation
+r <- 1 # randomization ratio (e.g., 1:1)
+nsim <- 1000
+
+###
+# simulate method with SSR allowing for smaller than expected N
+for( combo in 1:length(sim_list) ){
+  
+  # initialize object to save results in
+  simres <- data.frame( p=rep(NA,nsim), n=rep(NA,nsim) )
+  
+  pt <- sim_list[[combo]][1]
+  pc <- sim_list[[combo]][2]
+  
+  # loop through nsim simulations
+  for( i in 1:nsim ){
+    set.seed(i) # set seed for reproducibility
+    
+    # simulate stage 1
+    trt <- rbinom(n=n1/2, size=1, prob=pt)
+    con <- rbinom(n=n1/2, size=1, prob=pc)
+    
+    # blinded re-estimation
+    p0 <- sum(trt,con) / n1
+    
+    # assuming same delta, estimate new pt and pc
+    pt_n1 <- p0 - delta*(r/(1+r))
+    pc_n1 <- p0 + delta*(r/(1+r))
+    
+    # use power.prop.test based on re-estimated pt (p1) and pc (p2)
+    n_rest <- 2*ceiling(power.prop.test(p1=pt_n1,p2=pc_n1,sig.level=0.025,power=0.8,alternative='o')$n)
+    n2 <- n_rest - n1 # estimate sample size needed for remainder
+    if( n2 < 0 ){ n2 <- 0 } # if sufficient sample size already, set to 0
+    
+    # simulate stage 2 data
+    trt <- c(trt, rbinom(n=n2/2, size=1, prob=pt) )
+    con <- c(con, rbinom(n=n2/2, size=1, prob=pc) )
+    
+    # final analysis, save results
+    res <- prop.test(x=c(sum(trt),sum(con)), n=c(length(trt),length(con)), alternative = 'less')	# defined as less based on order of data entered for trt and con
+    simres[i,] <- c(round(res$p.value,4), n1+n2 )
+  }
+  
+  blinded_res[combo,] <- c( mean(simres$p < 0.025), round(mean(simres$n),1), round(sd(simres$n),1))
+  
+}
+
+
+###
+# simulate method with SSR but enrolling at least (N-N1) in stage 2 (i.e., not allowing fewer participants)
+for( combo in 1:length(sim_list) ){
+  
+  # initialize object to save results in
+  simres <- data.frame( p=rep(NA,nsim), n=rep(NA,nsim) )
+  
+  pt <- sim_list[[combo]][1]
+  pc <- sim_list[[combo]][2]
+  
+  # loop through nsim simulations
+  for( i in 1:nsim ){
+    set.seed(i) # set seed for reproducibility
+    
+    # simulate stage 1
+    trt <- rbinom(n=n1/2, size=1, prob=pt)
+    con <- rbinom(n=n1/2, size=1, prob=pc)
+    
+    # blinded re-estimation
+    p0 <- sum(trt,con) / n1
+    
+    # assuming same delta, estimate new pt and pc
+    pt_n1 <- p0 - delta*(r/(1+r))
+    pc_n1 <- p0 + delta*(r/(1+r))
+    
+    # use power.prop.test based on re-estimated pt (p1) and pc (p2)
+    n_rest <- 2*ceiling(power.prop.test(p1=pt_n1,p2=pc_n1,sig.level=0.025,power=0.8,alternative='o')$n)
+    n2 <- n_rest - n1 # estimate sample size needed for remainder
+    if( n2 < (n-n1) ){ n2 <- (n-n1) } # enroll at least (n-n1)
+    
+    # simulate stage 2 data
+    trt <- c(trt, rbinom(n=n2/2, size=1, prob=pt) )
+    con <- c(con, rbinom(n=n2/2, size=1, prob=pc) )
+    
+    # final analysis, save results
+    res <- prop.test(x=c(sum(trt),sum(con)), n=c(length(trt),length(con)), alternative = 'less')	# defined as less based on order of data entered for trt and con
+    simres[i,] <- c(round(res$p.value,4), n1+n2 )
+  }
+  
+  blinded_n2_res[combo,] <- c( mean(simres$p < 0.025), round(mean(simres$n),1), round(sd(simres$n),1))
+  
+}
+
+
+###
+# simulate fixed sample design for comparison
+for( combo in 1:length(sim_list) ){
+  
+  # initialize object to save results in
+  simres <- data.frame( p=rep(NA,nsim), n=rep(NA,nsim) )
+  
+  pt <- sim_list[[combo]][1]
+  pc <- sim_list[[combo]][2]
+  
+  # loop through nsim simulations
+  for( i in 1:nsim ){
+    set.seed(i) # set seed for reproducibility
+    
+    # simulate stage 1
+    trt <- rbinom(n=n1/2, size=1, prob=pt)
+    con <- rbinom(n=n1/2, size=1, prob=pc)
+    
+    # simulate stage 2 after stage 1 to keep same random sequence
+    trt2 <- rbinom(n=(n-n1)/2, size=1, prob=pt)
+    con2 <- rbinom(n=(n-n1)/2, size=1, prob=pc)
+
+    # final analysis
+    res <- prop.test(x=c(sum(c(trt,trt2)),sum(c(con,con2))), n=c(n/2,n/2), alternative = 'less')	# defined as less based on order of data entered for trt and con
+    simres[i,] <- c(round(res$p.value,4), n )
+  }
+
+  fixed_res[combo,] <- c( mean(simres$p < 0.025), round(mean(simres$n),1), round(sd(simres$n),1))
+  
+} 
+
+# Format results
+library(kableExtra)
+kbl_tab <- cbind(fixed_res,blinded_res,blinded_n2_res)
+
+kbl_tab %>%
+  kbl(col.names=c('Scenario',rep(c('Rejection Rate','ESS','ESS SD'), 3)) ) %>%
+  kable_classic() %>%
+  add_header_above(c(" "=1, "Fixed Sample"=3, "SSR with Lower N2"=3, "SSR with At Least N2"=3))
+```
+
+From these simulation results we can see that:
+
+* Without some form of futility testing, the blinded SSR methods lead to increased sample sizes in the null scenario with 25% versus 25%, as well as slightly higher type I error rates than the fixed sample design.
+* If the null scenario response reflects the nuisance parameter, we still see slightly higher type I error rates with SSR. However, the ESS increase is less large, likely because the effect went closer to 0. This may indicate that less prevalent outcomes are less affected by the null scenario with blinded re-estimation.
+* If we encounter the effect sizes used in the power analysis, we see that SSR that enrolls *at least* the $N_{total}=200$ of the fixed sample design increases power by allowing for larger sample sizes. On average, across all 1000 simulated trials, the average sample size was 212.7 (SD=18.5).
+* If we encounter an underpowered scenario, we see that the SSR methods also lead to an increased SSR but only slightly higher power. This suggests that either unblinded re-estimation processes or potentially futility monitoring could further improve performance.
+* Finally, if we observe the same $\delta=0.15$ but at higher observed rates ($p_{trt}=0.15$ and $p_{con}=0.30$), our blinded SSR increases power by 5.9 to 7.3% by allowing our sample size to increase based on the higher nuisance paramter (i.e., $\frac{0.15+0.3}{2}=0.225$).
+
+
+## Unblinded Re-estimation with Binary Outcome Simulation
+
+We can compare the results from our blinded SSR approach with an approach using unblinded SSR approaches. In this simulation we compare:
+
+* An approach using conditional power estimated from `gsDesign::ssrCP()`, where we assume that the second stage must have at least 100 participants but could increase to 200 participants (i.e., we don't allow fewer than expected participants in stage 2). This approach uses the inverse normal combination test based on the p-values from the two-sample test of proportions.
+* An approach that unblinds the control arm to use in re-estimating the `power.prop.test()` calculation for a decrease of 15% in the treatment arm. If the control arm has a response rate less than 15%, we stop for futility and calculate the one-sided p-value to record for futility. Otherwise, we allow the re-estimation to increase the sample size from 100 up to 200. Since we do not unblind the treatment arm, in this approach we evaluate the performance if we use the overall data for our final test p-value.
+* A fixed sample design enrolling 200 total participants without interim monitoring or re-estimation.
+
+The simulation code block is hidden, but can be shown for review.
+
+```{r unblindedSSR-binary-sim, class.source = 'fold-hide', cache=T, warning=F}
+library(gsDesign) # load library
+
+# list of 5 simulation scenarios to mimic our blinded SSR
+sim_list <- list( c(0.25, 0.25), c(0.175,0.175), c(0.1, 0.25), c(0.15, 0.25), c(0.15, 0.3))
+
+# Create objects to store results in
+unblinded_res <- unblinded_adhoc_res <- fixed_res <- matrix(nrow=5, ncol=3, dimnames = list(c('Null 25 v 25','Null 17.5 v 17.5','Alt 10 v 25','Alt 15 v 25','Alt 15 v 30'), c('Rej_Rate','ESS','ESS_SD')))
+
+# Set simulation parameters
+delta <- 0.15 # expected effect size under H1 from power calculation
+r <- 1 # randomization ratio (e.g., 1:1)
+nsim <- 1000
+
+x <- gsDesign(
+  k = 2, 
+  n.fix = 200, timing = 0.5, test.type=2,
+  alpha = 0.025, beta = 0.2, delta0 = 0, delta1 = 0.15, sfu='OF' ) 
+
+n_fix <- 200 # total sample size based on fixed sample
+n1 <- ceiling(x$n.I[1])
+n <- ceiling(x$n.I[2]) 
+
+###
+# simulate method with SSR using conditional power
+
+for( combo in 1:length(sim_list) ){
+  
+  # initialize object to save results in
+  simres_gs <- data.frame( zcombined=rep(NA,nsim), n=rep(NA,nsim) )
+  
+  pt <- sim_list[[combo]][1]
+  pc <- sim_list[[combo]][2]
+  
+  for( i in 1:nsim ){
+    set.seed(i) # set seed for reproducibility
+    
+    # simulate stage 1
+    trt <- rbinom(n=n1/2, size=1, prob=pt)
+    con <- rbinom(n=n1/2, size=1, prob=pc)
+    res_int <- prop.test(x=c(sum(trt),sum(con)), n=c(length(trt),length(con)), alternative = 'less')$p.value
+    
+    # UNblinded re-estimation
+    xx <- ssrCP(x = x, z1 = qnorm(1-res_int), overrun = 0, beta = 0.2, cpadj = c(0.5,0.8), maxinc = 1.5, z2 = z2NC)
+    n_rest <- ceiling(xx$dat$n2) - n1
+	  n2 <- n_rest
+	  n2 <- if(n2 <= 100){ 100 }else{n2} 
+    if( res_int < x$upper$prob[1,1] ){ 
+      # final analysis, save results
+      zcombined <- qnorm(1-res_int) / sqrt(1)
+      simres_gs[i,] <- c(zcombined, n1+0)
+    }else{
+      # simulate stage 2 data
+      trt2 <- rbinom(n=n2/2, size=1, prob=pt)
+      con2 <- rbinom(n=n2/2, size=1, prob=pc)
+      
+      # final analysis, save results
+      res <- prop.test(x=c(sum(trt2),sum(con2)), n=c(length(trt2),length(con2)), alternative = 'less')$p.value
+      
+      zcombined <- ( qnorm(1-res_int) + qnorm(1-res) ) / sqrt(2)
+      
+      simres_gs[i,] <- c(zcombined, n1+n2)
+    }
+  }
+  
+  unblinded_res[combo,] <- c( mean(simres_gs$zcombined >= qnorm(1-(0.025))), round(mean(simres_gs$n),1), round(sd(simres_gs$n),1))
+
+}
+
+###
+# somewhat ad hoc approach to unblinded SSR
+# first stage is used to implement re-estimation; no decreases in stage 2; up to 200 (versus 100) otherwise stop for futility
+for( combo in 1:length(sim_list) ){
+  
+  # set sample sizes based on fixed sample to initialize
+  n <- 200
+  n1 <- 100
+  
+  # initialize object to save results in
+  simres_gs <- data.frame( p=rep(NA,nsim), n=rep(NA,nsim) )
+  
+  pt <- sim_list[[combo]][1]
+  pc <- sim_list[[combo]][2]
+  
+  for( i in 1:nsim ){
+    set.seed(i) # set seed for reproducibility
+    
+    # simulate stage 1
+    trt <- rbinom(n=n1/2, size=1, prob=pt)
+    con <- rbinom(n=n1/2, size=1, prob=pc)
+    res_int <- prop.test(x=c(sum(trt),sum(con)), n=c(length(trt),length(con)), alternative = 'less')
+    
+    # UNblinded re-estimation, where we use the estimate of the control group and still power for a 0.15 decrease in treatment
+    n_reest <- if( mean(con) <= 0.15 ){ 10000 }else{ ceiling(power.prop.test(p1=mean(con)-0.15,p2=mean(con),sig.level=0.025,power=0.8, alternative='o')$n)*2 }
+    
+    n2 <- if( (n_reest - n1) < 100 ){100}else{n_reest - n1}
+    
+	  if( n2 > 200 ){
+      # ad hoc futility rule, save first stage result
+      p <- res_int$p.value
+      simres_gs[i,] <- c(p, n1+0)
+    }else{
+      # simulate stage 2 data
+      trt2 <- rbinom(n=n2/2, size=1, prob=pt)
+      con2 <- rbinom(n=n2/2, size=1, prob=pc)
+      
+      # final analysis, save results
+      res <- prop.test(x=c(sum(c(trt,trt2)),sum(c(con,con2))), n=c(length(c(trt,trt2)),length(c(con,con2))), alternative = 'less')
+      p <- res$p.value
+  
+      simres_gs[i,] <- c(p, n1+n2)
+    }
+  }
+  
+  unblinded_adhoc_res[combo,] <- c( mean(simres_gs$p < 0.025), round(mean(simres_gs$n),1), round(sd(simres_gs$n),1))
+
+}
+
+
+
+###
+# simulate fixed sample design for comparison
+for( combo in 1:length(sim_list) ){
+  
+  # set sample sizes for fixed sample
+  n <- 200
+  n1 <- 100
+  
+  # initialize object to save results in
+  simres <- data.frame( p=rep(NA,nsim), n=rep(NA,nsim) )
+  
+  pt <- sim_list[[combo]][1]
+  pc <- sim_list[[combo]][2]
+  
+  # loop through nsim simulations
+  for( i in 1:nsim ){
+    set.seed(i) # set seed for reproducibility
+    
+    # simulate stage 1
+    trt <- rbinom(n=n1/2, size=1, prob=pt)
+    con <- rbinom(n=n1/2, size=1, prob=pc)
+    
+    # simulate stage 2 after stage 1 to keep same random sequence
+    trt2 <- rbinom(n=(n-n1)/2, size=1, prob=pt)
+    con2 <- rbinom(n=(n-n1)/2, size=1, prob=pc)
+
+    # final analysis
+    res <- prop.test(x=c(sum(c(trt,trt2)),sum(c(con,con2))), n=c(n/2,n/2), alternative = 'less')	# defined as less based on order of data entered for trt and con
+    simres[i,] <- c(round(res$p.value,4), n )
+  }
+
+  fixed_res[combo,] <- c( mean(simres$p < 0.025), round(mean(simres$n),1), round(sd(simres$n),1))
+  
+} 
+
+# Format results
+library(kableExtra)
+kbl_tab <- cbind(fixed_res,unblinded_res,unblinded_adhoc_res)
+
+kbl_tab %>%
+  kbl(col.names=c('Scenario',rep(c('Rejection Rate','ESS','ESS SD'), 3)) ) %>%
+  kable_classic() %>%
+  add_header_above(c(" "=1, "Fixed Sample"=3, "SSR with CP"=3, "SSR Unblind Control"=3))
+```
+
+The simulation results indicate:
+
+* That the fixed sample design is slightly conservative with type I error of 2%, which is similar to the SSR with unblinded controls at 2.2%, although the sample size increases to an average of 212.6 (SD=39.0). 
+* The SSR with conditional power is overly conservative, as seen by the lower type I error rates and power compared to the fixed sample design. 
+* The SSR unblinded control shows the greatest improvement when the control reference is higher than expected (i.e., 30% instead of 25%), where power increases to 72.7% versus 68.9% for a fixed sample design. However, the ESS does increase to 224.6 (SD=51.8) versus 200 for the fixed sample design.
+* Some limitations in performance may be due to the fact that our allowed increase is somewhat limited in stage 2 from 100 to 200. In practice, if it was feasible to go higher we could likely improve our power relative to a fixed sample design.
+
+While only a limited set of methods and scenarios with a binary outcome, these results suggest the caution should be taken in implementing sample size re-estimation since it can introduce variability in our needed sample size while also potentially resulting in limited gains in power or type I error performance relative to a fixed sample design.
+
+
+# References
+
+Below are some references to highlight based on the slides and code:
+
+* [FDA Adaptive Design Clinical Trials for Drugs and Biologics Guidance for Industry Guidance Document](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adaptive-design-clinical-trials-drugs-and-biologics-guidance-industry): FDA guidance document on adaptive trial elements
+
+* [Recent innovations in adaptive trial designs: A review of design opportunities in translational research](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/recent-innovations-in-adaptive-trial-designs-a-review-of-design-opportunities-in-translational-research/614EAFEA5E89CA035E82E152AF660E5D?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark): 2023 review paper examining adaptive and novel trial elements with included case studies
+
+* [Guidance on interim analysis methods in clinical trials](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/guidance-on-interim-analysis-methods-in-clinical-trials/5051FDCF5284970B3DB01FE609AAA4C2?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark): 2023 review paper focusing on interim analyses in clinical trials with included case studies
+
+* [Kieser, Meinhard. *Methods and applications of sample size calculation and Recalculation in clinical trials.* Springer, 2020.](https://link.springer.com/book/10.1007/978-3-030-49528-2): textbook covering SSR methods and approaches
+

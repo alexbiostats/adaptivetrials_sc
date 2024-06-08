@@ -1,0 +1,2413 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Interim Monitoring for Futility/Efficacy/Safety</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+<link href="site_libs/academicons-1.9.1/css/academicons.css" rel="stylesheet" />
+
+<link rel="icon" type="image/png" href="./files/favicon.ico"/>
+
+<script type="text/javascript">
+function setBrand() {
+document.getElementsByClassName("navbar-brand")[0].href="https://www.alexkaizer.com";
+}
+window.onload = setBrand;
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Alex Kaizer</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Short Course
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="0_intro.html">Intro and Welcome</a>
+    </li>
+    <li>
+      <a href="1_intro_clinical_trials.html">Basics of Clinical Trials</a>
+    </li>
+    <li>
+      <a href="2_intro_bayesian.html">Bayesian 101</a>
+    </li>
+    <li>
+      <a href="3_interim_monitoring.html">Interim Monitoring</a>
+    </li>
+    <li>
+      <a href="4_sample_size_reestimation.html">Sample Size Re-Estimation</a>
+    </li>
+    <li>
+      <a href="5_adaptive_enrichment.html">Adaptive Enrichment</a>
+    </li>
+    <li>
+      <a href="6_treatment_arm_selection.html">Treatment Arm Selection</a>
+    </li>
+    <li>
+      <a href="7_adaptive_randomization.html">Adaptive Randomization</a>
+    </li>
+    <li>
+      <a href="8_bayesian_information_sharing.html">Bayesian Information Sharing</a>
+    </li>
+    <li>
+      <a href="9_master_protocols.html">Master Protocols</a>
+    </li>
+    <li>
+      <a href="10_seamless_designs.html">Seamless Designs</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="mailto:alex.kaizer@cuanschutz.edu">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://scholar.google.com/citations?user=ICpH74EAAAAJ&amp;hl=en">
+    <span class="ai ai-google-scholar ai-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.alexkaizer.com/files/Alex_CV.pdf">
+    <span class="ai ai-cv ai-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://github.com/alexbiostats">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://twitter.com/AlexBiostats">
+    <span class="fab fa-twitter fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.linkedin.com/in/alex-kaizer/">
+    <span class="fab fa-linkedin fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Interim Monitoring for
+Futility/Efficacy/Safety</h1>
+
+</div>
+
+
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p>In this module we introduce the “original” adaptive trial element of
+interim monitoring to stop a trial early for efficacy, futility, and/or
+safety. In these designs we may terminate a trial early because it is
+highly unlikely we would be able to detect a significant effect if we
+continued (i.e., <em>futility</em>), because we already have sufficient
+evidence of a significant treatment effect (i.e., <em>efficacy</em>), or
+because there are concerns relating to adverse events (i.e.,
+<em>safety</em>).</p>
+</div>
+<div id="slide-deck" class="section level1">
+<h1>Slide Deck</h1>
+<iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/4dfadc6943624b96a77e617e7b4e60ee" title="Interim Monitoring for Futility/Efficacy/Safety" allowfullscreen="true" data-ratio="1.7777777777777777">
+</iframe>
+<p> </p>
+<p>You can also download the <a
+href="./files/Slides/3_interim_monitoring.pptx">original PowerPoint
+file</a>.</p>
+</div>
+<div id="code-examples-in-r" class="section level1">
+<h1>Code Examples in R</h1>
+<p>Given the lengthy history of developing methods for interim
+monitoring, there are a host of software options available today. Within
+R, some of the packages to consider include:</p>
+<ul>
+<li><a href="https://www.rpact.org/"><code>rpact</code></a>: a package
+for confirmatory adaptive clinical trial design, simulation, and
+analysis; a <a
+href="https://cran.r-project.org/web/packages/Sequential/index.html">Shiny
+app</a> is also available</li>
+<li><a
+href="https://keaven.github.io/gsDesign/"><code>gsDesign</code></a>:
+includes both an R package and an <a
+href="https://rinpharma.shinyapps.io/gsdesign/">online interface</a> to
+estimate group sequential boundaries</li>
+<li><a
+href="https://cran.r-project.org/web/packages/GroupSeq/vignettes/GroupSeq.html"><code>GroupSeq</code></a>:
+a package with a graphical user interface accessed via R which helps to
+avoid having to learn too much coding or syntax to access
+boundaries</li>
+<li><a
+href="http://www.rctdesign.org/Welcome.html"><code>RCTdesign</code></a>:
+a package initially developed for S-Plus, but with a new version for use
+in R; need to request access via signed license agreement which can be a
+little burdensome</li>
+<li><a
+href="https://cran.r-project.org/web/packages/Sequential/index.html"><code>Sequential</code></a>:
+a package focused on exact sequential analysis for Poisson and binomial
+data where group sizes do not have to be specified in advance</li>
+</ul>
+<p>We will focus on <code>rpact</code> for our examples below:</p>
+<pre class="r"><code>library(rpact)</code></pre>
+<div id="rpact-and-the-getdesigngroupsequential-function"
+class="section level2">
+<h2><code>rpact</code> and the <code>getDesignGroupSequential()</code>
+Function</h2>
+<p>The powerhouse function <code>getDesignGroupSequential()</code>
+allows us to specify numerous elements of various group sequential
+designs.</p>
+<pre class="r"><code># Syntax: using getDesignGroupSequential function to calculate interim monitoring boundaries
+design &lt;- getDesignGroupSequential(
+    sided = &lt;specify if alternative hypothesis is one- or two-sided&gt;,  # default is 1 for one-sided, can also specified 2 for two-sided hypothesis test
+    alpha = &lt;desired type I error rate&gt;, # default is 0.025
+    beta = &lt;desired type II error rate&gt;, # default is 0.20 (i.e., power=1-beta, so default is 80% power)
+    kMax = &lt;maximum number of stages&gt;, # default is 3, number of interim analyses is kMax-1
+    informationRates = &lt;fixed information rates prior to start of trial when interim monitoring will occur&gt;, # default is (1:kMax)/kMax, can manually specify and ignore kMax argument
+    typeOfDesign = &lt;type of boundaries for efficacy monitoring&gt;, # many choices (see documentation) including O&#39;Brien-Fleming (&quot;OF&quot;), Pocock (&quot;P&quot;), and alpha-spending versions (&quot;asOF&quot; and &quot;asP&quot;)
+    typeBetaSpending = &lt;type of boundaries for futility monitoring&gt;, # many choices (see documentation) including O&#39;Brien-Fleming (&quot;bsOF&quot;) and Pocock (&quot;bsP&quot;)
+    futilityBounds = &lt;manually defined futility boundaries on the test statistic Z-scale&gt; # can define futility with desired rules or use spending in next argument
+)</code></pre>
+</div>
+<div id="rpact-and-monitoring-for-only-efficacy" class="section level2">
+<h2><code>rpact</code> and Monitoring for Only Efficacy</h2>
+<p>In some settings, we may only wish to monitor our clinical trial to
+allow stopping for efficacy. In this setting, we would only stop early
+if we observed an overwhelming effect for our outcome that is being
+monitored.</p>
+<div id="two-sided-efficacy-boundaries" class="section level3">
+<h3>Two-Sided Efficacy Boundaries</h3>
+<p>Let’s start by exploring a few different boundaries and compare them
+graphically. We’ll assume we are interested in four equally spaced
+stages after 25%, 50%, 75%, and 100% of the trial enrollment has been
+observed:</p>
+<pre class="r"><code>eo_of &lt;- getDesignGroupSequential(typeOfDesign = &quot;OF&quot;, kMax = 4, sided=2, alpha=0.05) # O&#39;Brien-Fleming
+eo_hp &lt;- getDesignGroupSequential(typeOfDesign = &quot;HP&quot;, kMax = 4, sided=2, alpha=0.05) # Haybittle-Peto
+eo_asof &lt;- getDesignGroupSequential(typeOfDesign = &quot;asOF&quot;, kMax = 4, sided=2, alpha=0.05) # Alpha-spending O&#39;Brien-Fleming-like boundary
+eo_asp &lt;- getDesignGroupSequential(typeOfDesign = &quot;asP&quot;, kMax = 4, sided=2, alpha=0.05) # Alpha-spending Pocock-like boundary</code></pre>
+<p>The package includes the ability to extract these objects and make a
+plot:</p>
+<pre class="r"><code># create plot of stopping boundaries
+designSet &lt;- getDesignSet(designs = c(eo_of, eo_hp, eo_asof, eo_asp), variedParameters = &quot;typeOfDesign&quot;)
+
+plot(designSet,
+     type=1, # can plot boundaries with type=1, but also plot other characteristics (see ?plot.TrialDesignSet)
+     legendPosition = 2) # functionality doesn&#39;t seem to work to move legend placement</code></pre>
+<p><img src="3_interim_monitoring_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>However, the legend placement argument does not seem to be working,
+making it a little challenging to view. Instead, we can create our own
+figure by extracting the relevant information. First let’s look at the R
+output for our O’Brien-Fleming object and compare with the extracted
+critical values:</p>
+<pre class="r"><code>print(eo_of) # review output; without print() in Rmd it creates nicely formatted results</code></pre>
+<pre><code>## ## Design parameters and output of group sequential design
+## 
+## ### User defined parameters
+## 
+## * *Maximum number of stages*: 4 
+## * *Stages*: 1, 2, 3, 4 
+## * *Significance level*: 0.0500 
+## * *Test*: two-sided 
+## 
+## ### Derived from user defined parameters
+## 
+## * *Information rates*: 0.250, 0.500, 0.750, 1.000 
+## 
+## ### Default parameters
+## 
+## * *Type of design*: O&#39;Brien &amp; Fleming 
+## * *Type II error rate*: 0.2000 
+## * *Two-sided power*: FALSE 
+## * *Tolerance*: 1e-08 
+## 
+## ### Output
+## 
+## * *Cumulative alpha spending*: 5.153e-05, 0.004221, 0.02091, 0.0500 
+## * *Critical values*: 4.049, 2.863, 2.337, 2.024 
+## * *Stage levels (one-sided)*: 2.576e-05, 0.0021, 0.009708, 0.02147</code></pre>
+<pre class="r"><code>eo_of_crit &lt;- eo_of$criticalValues # extracts the critical values, which here are symmetric
+eo_of_crit # check values are correct</code></pre>
+<pre><code>## [1] 4.048591 2.862786 2.337455 2.024295</code></pre>
+<p>Now that we see we’ve extracted the correct information, we can
+extract for each boundary and create a plot:</p>
+<pre class="r fold-hide"><code># extract critical values for all objects
+eo_hp_crit &lt;- eo_hp$criticalValues
+eo_asof_crit &lt;- eo_asof$criticalValues
+eo_asp_crit &lt;- eo_asp$criticalValues
+
+# Plot boundaries
+plot(x=NA, y=NA, xlim=c(0.25,1), ylim=c(-5,5), xlab=&#39;Information Rate&#39;, ylab=&#39;Critical Value&#39;, xaxt=&#39;n&#39;, main=&#39;rpact Two-Sided Efficacy Boundary Comparison&#39;)
+axis(1, at=seq(0.25,1,by=0.25) ) # label x-axis
+abline(h=seq(-6,6,by=1), col=&#39;gray90&#39;) # add horizontal lines for easier reference
+abline(h=c(-1,1)*qnorm(1-0.025), lty=2) # add critical values at Z=+/-1.96 to reflect standard group sequential boundaries
+legend(x=0.25,y=qnorm(1-0.025)+0.4, &quot;qnorm(1-0.025)=1.96&quot;, cex=0.5, adj=0.052, box.col=&#39;white&#39;)
+
+lines(x=seq(0.25,1,by=0.25), y=eo_of_crit, type=&#39;o&#39;, lwd=2, pch=16)
+lines(x=seq(0.25,1,by=0.25), y=-eo_of_crit, type=&#39;o&#39;, lwd=2, pch=16)
+
+lines(x=seq(0.25,1,by=0.25), y=eo_asof_crit, type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+lines(x=seq(0.25,1,by=0.25), y=-eo_asof_crit, type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+
+lines(x=seq(0.25,1,by=0.25), y=eo_hp_crit, type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+lines(x=seq(0.25,1,by=0.25), y=-eo_hp_crit, type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+
+lines(x=seq(0.25,1,by=0.25), y=eo_asp_crit, type=&#39;o&#39;, lwd=2, pch=16, col=&#39;blue&#39;, lty=4)
+lines(x=seq(0.25,1,by=0.25), y=-eo_asp_crit, type=&#39;o&#39;, lwd=2, pch=16, col=&#39;blue&#39;, lty=4)
+
+# Add legend
+legend(horiz=T, xpd=T, &#39;top&#39;, inset=-0.1, col=c(&#39;black&#39;,&#39;green4&#39;,&#39;orangered2&#39;,&#39;blue&#39;), lwd=2, legend=c(&#39;OF&#39;,&#39;asOF&#39;,&#39;HP&#39;,&#39;ASP&#39;), bty=&#39;n&#39;, cex=0.8, lty=c(1,5,3,4))
+
+# Add text to note stopping rules
+text(x=0.625, y=4.5, &quot;Stop for Efficacy&quot;)
+text(x=0.625, y=-4.5, &quot;Stop for Efficacy&quot;)
+text(x=0.625, y=0, &quot;Continue Study to Next Stage&quot;)</code></pre>
+<p><img src="3_interim_monitoring_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>From the figure comparing stopping boundaries, there are a few trends
+worth highlighting:</p>
+<ul>
+<li>O’Brien-Fleming (OF) and the alpha-spending O’Brien-Fleming-like
+boundary (asOF) are very similar, but we do see that the alpha-spending
+is slightly more conservative at earlier interim looks.</li>
+<li>Both Haybittle-Peto (HP) and the alpha-spending Pocock-like boundary
+(asP) have the same critical value at the first three looks. However, HP
+is more conservative, because at the final look its value of 1.982751 is
+very similar to the traditional threshold of 1.96. In contrast, asP’s
+boundary at the end of the study is now 2.3500295.</li>
+<li>Boundaries that are more conservative early on tend to be most
+similar to designs without interim monitoring for futility for the final
+analysis.</li>
+</ul>
+</div>
+<div id="one-sided-efficacy-boundaries" class="section level3">
+<h3>One-Sided Efficacy Boundaries</h3>
+<p>We can also easily make the same figure we had before by modifying
+some arguments in <code>getDesignGroupSequential()</code>:</p>
+<ul>
+<li><code>sided</code> becomes 1</li>
+<li><code>alpha</code> becomes 0.025</li>
+</ul>
+<p>You may be wondering, why would we change our <span
+class="math inline">\(\alpha\)</span> from 0.05 to 0.025? In practice,
+we could choose a more liberal one-sided <span
+class="math inline">\(\alpha=0.05\)</span>, however this would change
+our critical value from 1.959964 at <span
+class="math inline">\(\alpha=0.025\)</span> to 1.6448536 at <span
+class="math inline">\(\alpha=0.05\)</span>. This could increase our risk
+of a type I error (i.e., falsely finding an effect when none exists).
+Depending on the context, we may wish to use the more conservative
+one-sided <span class="math inline">\(\alpha=0.025\)</span>.</p>
+<p>Now, let’s examine the modified code and observe the boundaries.
+We’ll add a comparison with <span
+class="math inline">\(\alpha=0.05\)</span> for our O’Brien-Fleming
+boundary for comparison:</p>
+<pre class="r"><code>eo_of1 &lt;- getDesignGroupSequential(typeOfDesign = &quot;OF&quot;, kMax = 4, sided=1, alpha=0.025) # O&#39;Brien-Fleming
+eo_hp1 &lt;- getDesignGroupSequential(typeOfDesign = &quot;HP&quot;, kMax = 4, sided=1, alpha=0.025) # Haybittle-Peto
+eo_asof1 &lt;- getDesignGroupSequential(typeOfDesign = &quot;asOF&quot;, kMax = 4, sided=1, alpha=0.025) # Alpha-spending O&#39;Brien-Fleming-like boundary
+eo_asp1 &lt;- getDesignGroupSequential(typeOfDesign = &quot;asP&quot;, kMax = 4, sided=1, alpha=0.025) # Alpha-spending Pocock-like boundary
+
+# add OBF with 0.05 alpha
+eo_of1_alpha05 &lt;- getDesignGroupSequential(typeOfDesign = &quot;OF&quot;, kMax = 4, sided=1, alpha=0.05) # O&#39;Brien-Fleming with 0.05 boundary
+
+# extract critical values
+eo_of1_crit &lt;- eo_of1$criticalValues
+eo_hp1_crit &lt;- eo_hp1$criticalValues
+eo_asof1_crit &lt;- eo_asof1$criticalValues
+eo_asp1_crit &lt;- eo_asp1$criticalValues
+eo_of1_alpha05_crit &lt;- eo_of1_alpha05$criticalValues
+
+# compare OBF with 0.025 and 0.05
+rbind( &#39;Two-Sided OBF with alpha=0.05&#39;=eo_of_crit, &#39;One-Sided OBF with alpha=0.025&#39;=eo_of1_crit, &#39;One-Sided OBF with alpha=0.05&#39;=eo_of1_alpha05_crit)</code></pre>
+<pre><code>##                                    [,1]     [,2]     [,3]     [,4]
+## Two-Sided OBF with alpha=0.05  4.048591 2.862786 2.337455 2.024295
+## One-Sided OBF with alpha=0.025 4.048591 2.862786 2.337455 2.024296
+## One-Sided OBF with alpha=0.05  3.466200 2.450973 2.001211 1.733100</code></pre>
+<p>First, we see the top two rows are the same for our two-sided
+O’Brien-Fleming boundary with <span
+class="math inline">\(\alpha=0.05\)</span> and our one-sided
+O’Brien-Fleming boundary with <span
+class="math inline">\(\alpha=0.025\)</span>. This is because our
+two-sided boundary assumed that our <span
+class="math inline">\(\alpha=0.05\)</span> was distributed symmetrically
+with 0.025 on both sides.</p>
+<p>From the comparison of our one-sided O’Brien Fleming boundaries, the
+lower row with <span class="math inline">\(\alpha=0.05\)</span> has
+lower critical value thresholds, making it more likely to declare
+significance.</p>
+<p>For visual comparison of boundaries:</p>
+<pre class="r fold-hide"><code># Plot boundaries
+plot(x=NA, y=NA, xlim=c(0.25,1), ylim=c(-5,5), xlab=&#39;Information Rate&#39;, ylab=&#39;Critical Value&#39;, xaxt=&#39;n&#39;, main=&#39;rpact One-Sided Efficacy Boundary Comparison&#39;)
+axis(1, at=seq(0.25,1,by=0.25) ) # label x-axis
+abline(h=seq(-6,6,by=1), col=&#39;gray90&#39;) # add horizontal lines for easier reference
+abline(h=c(-1,1)*qnorm(1-0.025), lty=2) # add critical values at Z=+/-1.96 to reflect standard group sequential boundaries
+legend(x=0.25,y=qnorm(1-0.025)+0.4, &quot;qnorm(1-0.025)=1.96&quot;, cex=0.5, adj=0.052, box.col=&#39;white&#39;)
+
+lines(x=seq(0.25,1,by=0.25), y=eo_of1_crit, type=&#39;o&#39;, lwd=2, pch=16)
+lines(x=seq(0.25,1,by=0.25), y=eo_of1_alpha05_crit, type=&#39;o&#39;, lwd=2, pch=16, col=&#39;gray65&#39;)
+
+lines(x=seq(0.25,1,by=0.25), y=eo_asof1_crit, type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+
+lines(x=seq(0.25,1,by=0.25), y=eo_hp1_crit, type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+
+lines(x=seq(0.25,1,by=0.25), y=eo_asp1_crit, type=&#39;o&#39;, lwd=2, pch=16, col=&#39;blue&#39;, lty=4)
+
+# Add legend
+legend(horiz=T, xpd=T, &#39;top&#39;, inset=-0.1, col=c(&#39;black&#39;,&#39;gray65&#39;,&#39;green4&#39;,&#39;orangered2&#39;,&#39;blue&#39;), lwd=2, legend=c(&#39;OF&#39;,&#39;OF 0.05&#39;,&#39;asOF&#39;,&#39;HP&#39;,&#39;ASP&#39;), bty=&#39;n&#39;, cex=0.8, lty=c(1,1,5,3,4))
+
+# Add text to note stopping rules
+text(x=0.625, y=4.5, &quot;Stop for Efficacy&quot;)
+text(x=0.625, y=-4.5, &quot;Continue Study to Next Stage&quot;)
+text(x=0.625, y=0, &quot;Continue Study to Next Stage&quot;)</code></pre>
+<p><img src="3_interim_monitoring_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>From the figure comparing stopping boundaries, there are a few trends
+worth highlighting:</p>
+<ul>
+<li>We can visually see that the O’Brien-Fleming with <span
+class="math inline">\(\alpha=0.025\)</span> (OF) has higher critical
+value thresholds compared to the O’Brien-Fleming boundary with <span
+class="math inline">\(\alpha=0.05\)</span> (OF 0.05).</li>
+<li>All boundaries here are identical to our previous two-sided figure
+since we used <span class="math inline">\(\alpha=0.025\)</span>, but
+there is no lower boundary.</li>
+<li>For one-sided hypothesis tests, the directionality of our test is
+<em>very</em> important. We must be careful to ensure we are
+implementing the proper test:
+<ul>
+<li>If we are testing <span class="math inline">\(H_1\colon \mu_{trt}
+&gt; \mu_{con}\)</span> and our estimate is <span
+class="math inline">\(\delta = \mu_{trt} - \mu_{con}\)</span>, then we
+would want a positive critical value to stop the study early for
+efficacy in our one-sided test. For example, if <span
+class="math inline">\(Z=5\)</span> we would stop at any interim look for
+all presented methods.</li>
+<li>If <span class="math inline">\(Z=-5\)</span> for our one-sided test
+with <span class="math inline">\(H_1\colon \mu_{trt} &gt;
+\mu_{con}\)</span>, we would continue the study because we do not have
+evidence of efficacy. <em>(However, if we had incorporated interim
+monitoring for futility we might have stopped for futility.)</em></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="rpact-and-monitoring-for-only-futility" class="section level2">
+<h2><code>rpact</code> and Monitoring for Only Futility</h2>
+<p>Our previous section examined efficacy-only interim monitoring. We
+can also design studies where we are only monitoring for futility,
+indicating we would only stop early if it is highly unlikely that we
+would be able to declare efficacy at the conclusion of the trial if we
+reached full enrollment.</p>
+<div id="two-sided-futility-boundaries" class="section level3">
+<h3>Two-Sided Futility Boundaries</h3>
+<p>Let’s start by exploring a few different boundaries and compare them
+graphically. We’ll assume we are interested in four equally spaced
+stages after 25%, 50%, 75%, and 100% of the trial enrollment has been
+observed. Using <code>getDesignGroupSequential()</code>, we need to add
+an argument that manually defines <span
+class="math inline">\(\alpha\)</span>-spending via the
+<code>userAlphaSpending</code> argument:</p>
+<pre class="r"><code># Two-sided O&#39;Brien-Fleming futility boundaries
+fo_of &lt;- getDesignGroupSequential(typeOfDesign = &quot;asUser&quot;,  # use asUser to note we are defining a custom design
+                                  alpha=0.05, # defines alpha level for two-sided test
+                                  userAlphaSpending = c(0, 0, 0, 0.05), # sets our alpha-thresholds for stopping at each stage (0 corresponds to being impossible to stop since p-values may be approximately 0 with asymptotics but are not exact without special tests)
+                                  typeBetaSpending = &quot;bsOF&quot;, # O&#39;Brien-Fleming futility boundaries
+                                  bindingFutility = FALSE, # TRUE or FALSE to determine if a study MUST stop if crossing the boundary, recommend FALSE in practice to allow DSMB to take into all evidence in making recommendations
+                                  kMax = 4, 
+                                  sided=2,
+                                  beta=0.2) # desired type II error rate (i.e., power=1-beta)
+
+# Two-sided Pocock futility boundaries
+fo_p &lt;- getDesignGroupSequential(typeOfDesign = &quot;asUser&quot;, alpha=0.05, userAlphaSpending = c(0,0,0,0.05), 
+                                 typeBetaSpending = &quot;bsP&quot;, # Pocock futility boundaries
+                                 bindingFutility = FALSE, kMax = 4, sided=2, beta=0.2)</code></pre>
+<p>Let’s dissect some of the output and how it may look differently from
+our efficacy-only boundary:</p>
+<pre class="r"><code>print(fo_of)</code></pre>
+<pre><code>## ## Design parameters and output of group sequential design
+## 
+## ### User defined parameters
+## 
+## * *Type of design*: No early efficacy stop 
+## * *Maximum number of stages*: 4 
+## * *Stages*: 1, 2, 3, 4 
+## * *Significance level*: 0.0500 
+## * *Test*: two-sided 
+## * *Type of beta spending*: O&#39;Brien &amp; Fleming type beta spending 
+## 
+## ### Derived from user defined parameters
+## 
+## * *Information rates*: 0.250, 0.500, 0.750, 1.000 
+## 
+## ### Default parameters
+## 
+## * *Type II error rate*: 0.2000 
+## * *Two-sided power*: FALSE 
+## * *Binding futility*: FALSE 
+## * *Beta adjustment*: TRUE 
+## * *Tolerance*: 1e-08 
+## * *User defined alpha spending*: 0.00, 0.00, 0.00, 0.05 
+## 
+## ### Output
+## 
+## * *Power*: 0.0000, 2.872e-08, 5.862e-08, 0.8000 
+## * *futilityBoundsNonBinding*: NA, 0.587, 1.369 
+## * *Cumulative alpha spending*: 0.0000, 0.0000, 0.0000, 0.0500 
+## * *Cumulative beta spending*: 0.00000, 0.06281, 0.13558, 0.20000 
+## * *Critical values*: Inf, Inf, Inf, 1.960 
+## * *Stage levels (one-sided)*: 0.0000, 0.0000, 0.0000, 0.0250</code></pre>
+<p>From <code>print(fo_of)</code> in the lower <code>Output:</code>
+section:</p>
+<ul>
+<li>We now have a <code>futilityBoundsNonBinding</code> line that only
+includes 3 values, one of which is <code>NA</code>:
+<ul>
+<li>These three values represent our first three stages, which
+correspond to our interim analyses since the fourth stage means the
+trial is complete.</li>
+<li>The first interim look with this design is <code>NA</code>,
+indicating that for the chosen boundary type and location of the interim
+look there is no setting where the design would recommend terminating
+for futility. In other words, we will always enroll at least 50% of the
+participants in our study using these O’Brien-Fleming boundaries for
+futility monitoring, assuming the DSMB or external factors do not
+terminate the trial before completion.</li>
+<li>Note, the because there is a stage without a valid futility
+boundary, the default behavior in <code>rpact</code> is to reallocate
+our <span class="math inline">\(\beta\)</span>-spending to later stages.
+If you wish to leave the first stage <span
+class="math inline">\(\beta\)</span> “unspent”, you can add the argument
+<code>betaAdjustment=F</code> to the function.</li>
+</ul></li>
+<li>The <code>Critical values</code> line includes 4 values, three of
+which are <span class="math inline">\(\infty\)</span>:
+<ul>
+<li>The “fourth” stage critical value is represented by the
+<code>Critical values</code> row, where we see the final threshold is
+our <span class="math inline">\(Z\)</span>-score based on a two-sided
+test with <span class="math inline">\(\alpha=0.05\)</span> (i.e.,
+<code>qnorm(0.975)</code>=1.96).</li>
+<li>The three <code>Inf</code> values indicate it is impossible to stop
+for efficacy since we will never observe a test statistic of <span
+class="math inline">\(Z=\infty\)</span>.</li>
+<li>In practice, we could also set the critical values to be very large
+(e.g., <span class="math inline">\(Z=5\)</span>) since this would
+correspond to a very large treatment effect.</li>
+</ul></li>
+</ul>
+<p>Let’s create our plots in a similar way to our efficacy examples to
+see these two-sided boundaries.</p>
+<pre class="r fold-hide"><code># extract critical values for all objects FOR FUTILITY BOUNDS
+fo_of_fbnd &lt;- fo_of$futilityBounds
+fo_p_fbnd &lt;- fo_p$futilityBounds
+
+# extract critical values for all objects FOR EFFICACY
+fo_of_crit &lt;- fo_of$criticalValues
+fo_p_crit &lt;- fo_p$criticalValues
+
+# Plot boundaries
+plot(x=NA, y=NA, xlim=c(0.25,1), ylim=c(-5,5), xlab=&#39;Information Rate&#39;, ylab=&#39;Critical Value&#39;, xaxt=&#39;n&#39;, main=&#39;rpact Two-Sided Futility Boundary Comparison&#39;)
+axis(1, at=seq(0.25,1,by=0.25) ) # label x-axis
+abline(h=seq(-6,6,by=1), col=&#39;gray90&#39;) # add horizontal lines for easier reference
+abline(h=c(-1,1)*qnorm(1-0.025), lty=2) # add critical values at Z=+/-1.96 to reflect standard group sequential boundaries
+legend(x=0.25,y=qnorm(1-0.025)+0.4, &quot;qnorm(1-0.025)=1.96&quot;, cex=0.5, adj=0.052, box.col=&#39;white&#39;)
+
+lines(x=seq(0.25,1,by=0.25), y=c(fo_of_fbnd, fo_of_crit[4]), type=&#39;o&#39;, lwd=2, pch=16)
+lines(x=seq(0.25,1,by=0.25), y=-c(fo_of_fbnd, fo_of_crit[4]), type=&#39;o&#39;, lwd=2, pch=16)
+
+lines(x=seq(0.25,1,by=0.25), y=c(fo_p_fbnd, fo_p_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+lines(x=seq(0.25,1,by=0.25), y=-c(fo_p_fbnd, fo_p_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+
+# Add legend
+legend(horiz=T, xpd=T, &#39;top&#39;, inset=-0.1, col=c(&#39;black&#39;,&#39;green4&#39;), lwd=2, legend=c(&#39;OF&#39;,&#39;P&#39;), bty=&#39;n&#39;, cex=0.8, lty=c(1,5))
+
+# Add text to note stopping rules
+text(x=0.625, y=4.5, &quot;Continue Study to Next Stage&quot;)
+text(x=0.625, y=-4.5, &quot;Continue Study to Next Stage&quot;)
+text(x=0.625, y=0, &quot;Stop for Futility&quot;)</code></pre>
+<p><img src="3_interim_monitoring_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>From the figure comparing stopping boundaries, there are a few trends
+worth highlighting:</p>
+<ul>
+<li>Unlike with efficacy boundaries, Pocock (P) futility boundaries are
+not constant over all stages.</li>
+<li>As noted before, the O’Brien-Fleming (OF) boundaries do not have an
+interim stopping rule at the first stage.</li>
+</ul>
+</div>
+<div id="one-sided-futility-boundaries" class="section level3">
+<h3>One-Sided Futility Boundaries</h3>
+<p>We can also modify our previous futility boundaries for a one-sided
+hypothesis test. Here we will again change <span
+class="math inline">\(\alpha=0.05\)</span> to <span
+class="math inline">\(\alpha=0.025\)</span> for consistency with our
+previous example:</p>
+<pre class="r"><code># One-sided O&#39;Brien-Fleming futility boundaries
+fo_of1 &lt;- getDesignGroupSequential(typeOfDesign = &quot;asUser&quot;,  # use asUser to note we are defining a custom design
+                                  alpha=0.025, # defines alpha level for one-sided test
+                                  userAlphaSpending = c(0, 0, 0, 0.025), # sets our alpha-thresholds for stopping at each stage (0 corresponds to being impossible to stop since p-values may be approximately 0 with asymptotics but are not exact without special tests)
+                                  typeBetaSpending = &quot;bsOF&quot;, # O&#39;Brien-Fleming futility boundaries
+                                  bindingFutility = FALSE, # TRUE or FALSE to determine if a study MUST stop if crossing the boundary, recommend FALSE in practice to allow DSMB to take into all evidence in making recommendations
+                                  kMax = 4, 
+                                  sided=1,
+                                  beta=0.2) # desired type II error rate (i.e., power=1-beta)
+
+# One-sided Pocock futility boundaries
+fo_p1 &lt;- getDesignGroupSequential(typeOfDesign = &quot;asUser&quot;, alpha=0.025, userAlphaSpending = c(0,0,0,0.025), 
+                                 typeBetaSpending = &quot;bsP&quot;, # Pocock futility boundaries
+                                 bindingFutility = FALSE, kMax = 4, sided=1, beta=0.2)</code></pre>
+<p>Let’s create our plots in a similar way to our efficacy examples to
+see these two-sided boundaries.</p>
+<pre class="r fold-hide"><code># extract critical values for all objects FOR FUTILITY BOUNDS
+fo_of1_fbnd &lt;- fo_of1$futilityBounds
+fo_p1_fbnd &lt;- fo_p1$futilityBounds
+
+# extract critical values for all objects FOR EFFICACY
+fo_of1_crit &lt;- fo_of1$criticalValues
+fo_p1_crit &lt;- fo_p1$criticalValues
+
+# Plot boundaries
+plot(x=NA, y=NA, xlim=c(0.25,1), ylim=c(-5,5), xlab=&#39;Information Rate&#39;, ylab=&#39;Critical Value&#39;, xaxt=&#39;n&#39;, main=&#39;rpact One-Sided Futility Boundary Comparison&#39;)
+axis(1, at=seq(0.25,1,by=0.25) ) # label x-axis
+abline(h=seq(-6,6,by=1), col=&#39;gray90&#39;) # add horizontal lines for easier reference
+abline(h=c(-1,1)*qnorm(1-0.025), lty=2) # add critical values at Z=+/-1.96 to reflect standard group sequential boundaries
+legend(x=0.25,y=qnorm(1-0.025)+0.4, &quot;qnorm(1-0.025)=1.96&quot;, cex=0.5, adj=0.052, box.col=&#39;white&#39;)
+
+lines(x=seq(0.25,1,by=0.25), y=c(fo_of1_fbnd, fo_of1_crit[4]), type=&#39;o&#39;, lwd=2, pch=16)
+
+lines(x=seq(0.25,1,by=0.25), y=c(fo_p1_fbnd, fo_p1_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+
+# Add legend
+legend(horiz=T, xpd=T, &#39;top&#39;, inset=-0.1, col=c(&#39;black&#39;,&#39;green4&#39;), lwd=2, legend=c(&#39;OF&#39;,&#39;P&#39;), bty=&#39;n&#39;, cex=0.8, lty=c(1,5))
+
+# Add text to note stopping rules
+text(x=0.625, y=4.5, &quot;Continue Study to Next Stage&quot;)
+text(x=0.625, y=-4.5, &quot;Stop for Futility&quot;)
+text(x=0.625, y=0, &quot;Stop for Futility&quot;)</code></pre>
+<p><img src="3_interim_monitoring_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>From the figure comparing stopping boundaries, there are a few trends
+worth highlighting:</p>
+<ul>
+<li>With a one-sided stopping boundary, the O’Brien-Fleming boundaries
+now have a critical value at the first stage! Since it is negative we
+can identify that we would have to observe a large effect in the “wrong”
+direction from our hypothesis test to stop after only 25% of the study
+was enrolled.</li>
+<li>The O’Brien-Fleming boundary is less aggressive than the Pocock
+boundary. This suggests that a Pocock design may reduce our power
+without making other modifications (e.g., increased <span
+class="math inline">\(N_{max}\)</span> for the study relative to a fixed
+sample design).</li>
+</ul>
+<p>We can also compare the stopping boundaries to see how they change
+between our one- and two-sided designs:</p>
+<pre class="r"><code>rbind( &#39;OBF Two-Sided&#39;=c(fo_of_fbnd, fo_of_crit[4]), &#39;OBF One-Sided&#39;=c(fo_of1_fbnd, fo_of1_crit[4]),
+       &#39;Pocock Two-Sided&#39;=c(fo_p_fbnd, fo_p_crit[4]), &#39;Pocock One-Sided&#39;=c(fo_p1_fbnd, fo_p1_crit[4]))</code></pre>
+<pre><code>##                        [,1]      [,2]     [,3]     [,4]
+## OBF Two-Sided            NA 0.5866205 1.369296 1.959964
+## OBF One-Sided    -0.8286311 0.5980029 1.387095 1.959964
+## Pocock Two-Sided  0.3105479 0.8193076 1.453437 1.959964
+## Pocock One-Sided  0.1181548 0.8843132 1.470841 1.959964</code></pre>
+<p>We see in the table that while boundaries are similar between one-
+and two-sided cases, they do have some differences, especially at
+earlier stages.</p>
+</div>
+</div>
+<div id="rpact-and-monitoring-for-both-efficacy-and-futility"
+class="section level2">
+<h2><code>rpact</code> and Monitoring for Both Efficacy and
+Futility</h2>
+<p>Now that we’ve covered both efficacy-only and futility-only interim
+monitoring, we may be interested in seeing how we can combine them
+together within one design. Here we’ll incorporate our code from above
+to leverage stopping boundaries for both efficacy and futility.</p>
+<div id="two-sided-boundaries-for-efficacy-and-futility"
+class="section level3">
+<h3>Two-Sided Boundaries for Efficacy and Futility</h3>
+<p>It is possible to choose different boundaries styles for futility and
+efficacy. Here we will consider three designs: alpha/beta-spending
+O’Brien-Fleming-like boundaries for both, Pocock for both, or
+alpha-spending with O’Brien-Fleming-like boundaries for efficacy and
+Pocock for futility.</p>
+<pre class="r"><code># Two-sided O&#39;Brien-Fleming efficacy and futility boundaries
+ef_of &lt;- getDesignGroupSequential(typeOfDesign = &quot;asOF&quot;,  # specify O&#39;Brien-Fleming boundaries
+                                  alpha=0.05, # defines alpha level for two-sided test
+                                  typeBetaSpending = &quot;bsOF&quot;, # O&#39;Brien-Fleming futility boundaries
+                                  bindingFutility = FALSE, # TRUE or FALSE to determine if a study MUST stop if crossing the boundary, recommend FALSE in practice to allow DSMB to take into all evidence in making recommendations
+                                  kMax = 4, 
+                                  sided=2,
+                                  beta=0.2) # desired type II error rate (i.e., power=1-beta)
+
+# Two-sided Pocock efficacy and futility boundaries
+ef_p &lt;- getDesignGroupSequential(typeOfDesign = &quot;asP&quot;, alpha=0.05, 
+                                 typeBetaSpending = &quot;bsP&quot;, # Pocock futility boundaries
+                                 bindingFutility = FALSE, kMax = 4, sided=2, beta=0.2)
+
+# 
+ef_ofp &lt;- getDesignGroupSequential(typeOfDesign = &quot;asOF&quot;, alpha=0.05,
+                                 typeBetaSpending = &quot;bsP&quot;, # Pocock futility boundaries
+                                 bindingFutility = FALSE, kMax = 4, sided=2, beta=0.2)</code></pre>
+<p>Let’s jump right into our visualized boundary shapes:</p>
+<pre class="r fold-hide"><code># extract critical values for all objects FOR FUTILITY BOUNDS
+ef_of_fbnd &lt;- ef_of$futilityBounds
+ef_p_fbnd &lt;- ef_p$futilityBounds
+ef_ofp_fbnd &lt;- ef_ofp$futilityBounds
+
+# extract critical values for all objects FOR EFFICACY
+ef_of_crit &lt;- ef_of$criticalValues
+ef_p_crit &lt;- ef_p$criticalValues
+ef_ofp_crit &lt;- ef_ofp$criticalValues
+
+# Plot boundaries
+plot(x=NA, y=NA, xlim=c(0.25,1), ylim=c(-5,5), xlab=&#39;Information Rate&#39;, ylab=&#39;Critical Value&#39;, xaxt=&#39;n&#39;, main=&#39;rpact Two-Sided Eff+Fut Boundary Comparison&#39;)
+axis(1, at=seq(0.25,1,by=0.25) ) # label x-axis
+abline(h=seq(-6,6,by=1), col=&#39;gray90&#39;) # add horizontal lines for easier reference
+abline(h=c(-1,1)*qnorm(1-0.025), lty=2) # add critical values at Z=+/-1.96 to reflect standard group sequential boundaries
+legend(x=0.25,y=qnorm(1-0.025)+0.4, &quot;qnorm(1-0.025)=1.96&quot;, cex=0.5, adj=0.052, box.col=&#39;white&#39;)
+
+lines(x=seq(0.25,1,by=0.25), y=c(ef_of_fbnd, ef_of_crit[4]), type=&#39;o&#39;, lwd=2, pch=16) # futility upper
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_of_fbnd, ef_of_crit[4]), type=&#39;o&#39;, lwd=2, pch=16) # futility lower
+lines(x=seq(0.25,1,by=0.25), y=c(ef_of_crit), type=&#39;o&#39;, lwd=2, pch=16) # efficacy upper
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_of_crit), type=&#39;o&#39;, lwd=2, pch=16) # efficacy lower
+
+lines(x=seq(0.25,1,by=0.25), y=c(ef_p_fbnd, ef_p_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_p_fbnd, ef_p_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+lines(x=seq(0.25,1,by=0.25), y=c(ef_p_crit), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_p_crit), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+
+lines(x=seq(0.25,1,by=0.25), y=c(ef_ofp_fbnd, ef_ofp_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_ofp_fbnd, ef_ofp_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+lines(x=seq(0.25,1,by=0.25), y=c(ef_ofp_crit), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_ofp_crit), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+
+# Add legend
+legend(horiz=T, xpd=T, &#39;top&#39;, inset=-0.1, col=c(&#39;black&#39;,&#39;green4&#39;,&#39;orangered2&#39;), lwd=2, legend=c(&#39;OF&#39;,&#39;P&#39;,&#39;OF+P&#39;), bty=&#39;n&#39;, cex=0.8, lty=c(1,5,3))
+
+# Add text to note stopping rules
+text(x=0.625, y=4.5, &quot;Stop for Efficacy&quot;)
+text(x=0.625, y=-4.5, &quot;Stop for Efficacy&quot;)
+text(x=0.55, y=1.85, &quot;Continue Study to Next Stage&quot;)
+text(x=0.55, y=-1.85, &quot;Continue Study to Next Stage&quot;)
+text(x=0.625, y=0, &quot;Stop for Futility&quot;)</code></pre>
+<p><img src="3_interim_monitoring_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>This figure is a lot busier than our previous figure, but we have
+some takeaways here still:</p>
+<ul>
+<li>There are now 3 outcomes at each interim stage: stop for efficacy,
+stop for futility, or continue to the next stage.</li>
+<li>By the end of the trial, we see the boundaries have all
+converged.</li>
+<li>When mixing the O’Brien-Fleming for efficacy and Pocock for futility
+we see that the efficacy boundaries are the same as the O’Brien-Fleming
+for both efficacy and futilty design, but the futility boundaries have
+shifted since they need to arrive at the same efficacy threshold.</li>
+</ul>
+<p>For ease of viewing, we can also plot each design separately in a
+panel figure:</p>
+<pre class="r fold-hide"><code># Plot boundaries
+par(mfrow=c(2,2), mar=c(4.1,4.1,3.1,1.1)) # 2x2 panel figure
+
+# OBF
+plot(x=NA, y=NA, xlim=c(0.25,1), ylim=c(-5,5), xlab=&#39;Information Rate&#39;, ylab=&#39;Critical Value&#39;, xaxt=&#39;n&#39;, main=&quot;O&#39;Brien-Fleming-like Boundaries&quot;)
+axis(1, at=seq(0.25,1,by=0.25) ) # label x-axis
+abline(h=seq(-6,6,by=1), col=&#39;gray90&#39;) # add horizontal lines for easier reference
+abline(h=c(-1,1)*qnorm(1-0.025), lty=2) # add critical values at Z=+/-1.96 to reflect standard group sequential boundaries
+
+lines(x=seq(0.25,1,by=0.25), y=c(ef_of_fbnd, ef_of_crit[4]), type=&#39;o&#39;, lwd=2, pch=16) # futility upper
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_of_fbnd, ef_of_crit[4]), type=&#39;o&#39;, lwd=2, pch=16) # futility lower
+lines(x=seq(0.25,1,by=0.25), y=c(ef_of_crit), type=&#39;o&#39;, lwd=2, pch=16) # efficacy upper
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_of_crit), type=&#39;o&#39;, lwd=2, pch=16) # efficacy lower
+
+# Add text to note stopping rules
+text(x=0.625, y=4.5, &quot;Stop for Efficacy&quot;, cex=0.71)
+text(x=0.625, y=-4.5, &quot;Stop for Efficacy&quot;, cex=0.71)
+text(x=0.55, y=1.85, &quot;Continue Study to Next Stage&quot;, cex=0.71)
+text(x=0.55, y=-1.85, &quot;Continue Study to Next Stage&quot;, cex=0.71)
+text(x=0.625, y=0, &quot;Stop for Futility&quot;, cex=0.71)
+
+# Pocock
+plot(x=NA, y=NA, xlim=c(0.25,1), ylim=c(-5,5), xlab=&#39;Information Rate&#39;, ylab=&#39;Critical Value&#39;, xaxt=&#39;n&#39;, main=&quot;Pocock-like Boundaries&quot;)
+axis(1, at=seq(0.25,1,by=0.25) ) # label x-axis
+abline(h=seq(-6,6,by=1), col=&#39;gray90&#39;) # add horizontal lines for easier reference
+abline(h=c(-1,1)*qnorm(1-0.025), lty=2) # add critical values at Z=+/-1.96 to reflect standard group sequential boundaries
+
+lines(x=seq(0.25,1,by=0.25), y=c(ef_p_fbnd, ef_p_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_p_fbnd, ef_p_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+lines(x=seq(0.25,1,by=0.25), y=c(ef_p_crit), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_p_crit), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+
+# Add text to note stopping rules
+text(x=0.625, y=4.5, &quot;Stop for Efficacy&quot;, cex=0.71)
+text(x=0.625, y=-4.5, &quot;Stop for Efficacy&quot;, cex=0.71)
+text(x=0.55, y=1.85, &quot;Continue Study to Next Stage&quot;, cex=0.71)
+text(x=0.55, y=-1.85, &quot;Continue Study to Next Stage&quot;, cex=0.71)
+text(x=0.625, y=0, &quot;Stop for Futility&quot;, cex=0.71)
+
+# OBF+Pocock
+plot(x=NA, y=NA, xlim=c(0.25,1), ylim=c(-5,5), xlab=&#39;Information Rate&#39;, ylab=&#39;Critical Value&#39;, xaxt=&#39;n&#39;, main=&quot;OBF for Eff, P for Fut&quot;)
+axis(1, at=seq(0.25,1,by=0.25) ) # label x-axis
+abline(h=seq(-6,6,by=1), col=&#39;gray90&#39;) # add horizontal lines for easier reference
+abline(h=c(-1,1)*qnorm(1-0.025), lty=2) # add critical values at Z=+/-1.96 to reflect standard group sequential boundaries
+
+lines(x=seq(0.25,1,by=0.25), y=c(ef_ofp_fbnd, ef_ofp_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_ofp_fbnd, ef_ofp_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+lines(x=seq(0.25,1,by=0.25), y=c(ef_ofp_crit), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+lines(x=seq(0.25,1,by=0.25), y=-c(ef_ofp_crit), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+
+# Add text to note stopping rules
+text(x=0.625, y=4.5, &quot;Stop for Efficacy&quot;, cex=0.71)
+text(x=0.625, y=-4.5, &quot;Stop for Efficacy&quot;, cex=0.71)
+text(x=0.55, y=1.85, &quot;Continue Study to Next Stage&quot;, cex=0.71)
+text(x=0.55, y=-1.85, &quot;Continue Study to Next Stage&quot;, cex=0.71)
+text(x=0.625, y=0, &quot;Stop for Futility&quot;, cex=0.71)</code></pre>
+<p><img src="3_interim_monitoring_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+</div>
+<div id="one-sided-boundaries-for-efficacy-and-futility"
+class="section level3">
+<h3>One-Sided Boundaries for Efficacy and Futility</h3>
+<p>Let’s now examine how our boundaries change with a one-sided example
+when monitoring for both futility and efficacy. As before, we will
+change <span class="math inline">\(\alpha\)</span> to 0.025:</p>
+<pre class="r"><code># Two-sided O&#39;Brien-Fleming efficacy and futility boundaries
+ef_of1 &lt;- getDesignGroupSequential(typeOfDesign = &quot;asOF&quot;,  # specify O&#39;Brien-Fleming boundaries
+                                  alpha=0.025, # defines alpha level for two-sided test
+                                  typeBetaSpending = &quot;bsOF&quot;, # O&#39;Brien-Fleming futility boundaries
+                                  bindingFutility = FALSE, # TRUE or FALSE to determine if a study MUST stop if crossing the boundary, recommend FALSE in practice to allow DSMB to take into all evidence in making recommendations
+                                  kMax = 4, 
+                                  sided=1,
+                                  beta=0.2) # desired type II error rate (i.e., power=1-beta)
+
+# Two-sided Pocock efficacy and futility boundaries
+ef_p1 &lt;- getDesignGroupSequential(typeOfDesign = &quot;asP&quot;, alpha=0.025, 
+                                 typeBetaSpending = &quot;bsP&quot;, # Pocock futility boundaries
+                                 bindingFutility = FALSE, kMax = 4, sided=1, beta=0.2)
+
+# 
+ef_ofp1 &lt;- getDesignGroupSequential(typeOfDesign = &quot;asOF&quot;, alpha=0.025,
+                                 typeBetaSpending = &quot;bsP&quot;, # Pocock futility boundaries
+                                 bindingFutility = FALSE, kMax = 4, sided=1, beta=0.2)</code></pre>
+<p>Let’s jump right into our visualized boundary shapes:</p>
+<pre class="r fold-hide"><code># extract critical values for all objects FOR FUTILITY BOUNDS
+ef_of1_fbnd &lt;- ef_of1$futilityBounds
+ef_p1_fbnd &lt;- ef_p1$futilityBounds
+ef_ofp1_fbnd &lt;- ef_ofp1$futilityBounds
+
+# extract critical values for all objects FOR EFFICACY
+ef_of1_crit &lt;- ef_of1$criticalValues
+ef_p1_crit &lt;- ef_p1$criticalValues
+ef_ofp1_crit &lt;- ef_ofp1$criticalValues
+
+# Plot boundaries
+plot(x=NA, y=NA, xlim=c(0.25,1), ylim=c(-5,5), xlab=&#39;Information Rate&#39;, ylab=&#39;Critical Value&#39;, xaxt=&#39;n&#39;, main=&#39;rpact One-Sided Eff+Fut Boundary Comparison&#39;)
+axis(1, at=seq(0.25,1,by=0.25) ) # label x-axis
+abline(h=seq(-6,6,by=1), col=&#39;gray90&#39;) # add horizontal lines for easier reference
+abline(h=c(-1,1)*qnorm(1-0.025), lty=2) # add critical values at Z=+/-1.96 to reflect standard group sequential boundaries
+legend(x=0.25,y=qnorm(1-0.025)+0.4, &quot;qnorm(1-0.025)=1.96&quot;, cex=0.5, adj=0.052, box.col=&#39;white&#39;)
+
+lines(x=seq(0.25,1,by=0.25), y=c(ef_of1_fbnd, ef_of1_crit[4]), type=&#39;o&#39;, lwd=2, pch=16) # futility 
+lines(x=seq(0.25,1,by=0.25), y=c(ef_of1_crit), type=&#39;o&#39;, lwd=2, pch=16) # efficacy 
+
+
+lines(x=seq(0.25,1,by=0.25), y=c(ef_p1_fbnd, ef_p1_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+lines(x=seq(0.25,1,by=0.25), y=c(ef_p1_crit), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;green4&#39;, lty=5)
+
+
+lines(x=seq(0.25,1,by=0.25), y=c(ef_ofp1_fbnd, ef_ofp1_crit[4]), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+lines(x=seq(0.25,1,by=0.25), y=c(ef_ofp1_crit), type=&#39;o&#39;, lwd=2, pch=16, col=&#39;orangered2&#39;, lty=3)
+
+# Add legend
+legend(horiz=T, xpd=T, &#39;top&#39;, inset=-0.1, col=c(&#39;black&#39;,&#39;green4&#39;,&#39;orangered2&#39;), lwd=2, legend=c(&#39;OF&#39;,&#39;P&#39;,&#39;OF+P&#39;), bty=&#39;n&#39;, cex=0.8, lty=c(1,5,3))
+
+# Add text to note stopping rules
+text(x=0.625, y=4.5, &quot;Stop for Efficacy&quot;)
+text(x=0.625, y=-4.5, &quot;Stop for Futility&quot;)
+text(x=0.55, y=1.85, &quot;Continue Study to Next Stage&quot;)
+text(x=0.625, y=0, &quot;Stop for Futility&quot;)</code></pre>
+<p><img src="3_interim_monitoring_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>A similar story emerges from our previous examples:</p>
+<ul>
+<li>Pocock has the biggest penalty for efficacy monitoring as evidenced
+by its larger critical value at 100% information.</li>
+<li>O’Brien-Fleming-like boundaries for both efficacy and futility have
+the same efficacy boundaries when using OBF for efficacy but Pocock for
+futility, however the futility bondaries change compared to the
+Pocock-like boundaries.</li>
+<li>With a one-sided test, the direction of our hypothesis matters. This
+figure suggests that everything on the bottom portion of the graph would
+result in futility stopping.</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="simulation-study" class="section level1">
+<h1>Simulation Study</h1>
+<p>Now that we’ve seen examples of how to calculate boundaries and
+visualize them, let’s explore a brief simulation study. We will evaluate
+the following interim monitoring settings:</p>
+<ul>
+<li>Two-sided futility only with O’Brien-Fleming-like beta-spending
+boundaries</li>
+<li>Two-sided efficacy only with O’Brien-Fleming-like alpha-spending
+boundaries</li>
+<li>Two-sided efficacy and futility with O’Brien-Fleming-like
+alpha/beta-spending boundaries</li>
+<li>Two-sided efficacy and futility with Pocock-like alpha/beta-spending
+boundaries</li>
+<li>Fixed sample design</li>
+</ul>
+<p>For these scenarios, we will assume 5 total looks, <span
+class="math inline">\(\alpha=0.05\)</span>, and <span
+class="math inline">\(\beta=0.8\)</span>. We will evaluate three
+scenarios:</p>
+<ul>
+<li>Null scenario with no difference between arms with <span
+class="math inline">\(A_1 \sim N(0,1)\)</span> and <span
+class="math inline">\(A_2 \sim N(0,1)\)</span></li>
+<li>Alternative scenario with clinically meaningful difference between
+groups with <span class="math inline">\(A_1 \sim N(0,1)\)</span> and
+<span class="math inline">\(A_2 \sim N(0.4,1)\)</span></li>
+<li>Alternative scenario with half the clinically meaningful difference
+between groups with <span class="math inline">\(A_1 \sim N(0,1)\)</span>
+and <span class="math inline">\(A_2 \sim N(0.2,1)\)</span></li>
+</ul>
+<p>Our sample sizes will be determined based on the <span
+class="math inline">\(n\)</span> needed for the alternative
+scenario:</p>
+<pre class="r"><code>power.t.test(delta=0.4, sd=1, sig.level=0.05, power=0.8)</code></pre>
+<pre><code>## 
+##      Two-sample t test power calculation 
+## 
+##               n = 99.08057
+##           delta = 0.4
+##              sd = 1
+##       sig.level = 0.05
+##           power = 0.8
+##     alternative = two.sided
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>Recall, we always round up to the next integer to ensure that we have
+the desired power level of 80%. In other words, 99.08057 becomes 100 per
+group.</p>
+<p>Our next code chunk provides a simple step-by-step simulation. The
+chunk is hidden by default, but you can unhide it to see the
+behind-the-scenes structure or to modify the setting for anything you
+are interested in! The general set-up will also work for other types of
+outcomes (e.g., binary, ordinal, etc.), but will need different data
+generating mechanisms (i.e., the <code>rxxxx</code> functions).</p>
+<p>First, let’s estimate the boundaries we will need for each simulation
+based on our five scenarios. Here we will assume everything is estimated
+on a <span class="math inline">\(Z\)</span>-scale. For simplicity, we
+will also leverage the fact that all our boundaries are symmetric and we
+will evaluate the <span class="math inline">\(|Z|\)</span> (i.e., the
+absolute value of <span class="math inline">\(Z\)</span>):</p>
+<pre class="r fold-hide"><code>## Two-sided futility only with O&#39;Brien-Fleming-like beta-spending boundaries
+fo_of &lt;- getDesignGroupSequential(typeOfDesign = &quot;asUser&quot;, alpha=0.05, userAlphaSpending = c(0,0,0,0,0.05), 
+                                 typeBetaSpending = &quot;bsOF&quot;, # Pocock futility boundaries
+                                 bindingFutility = FALSE, kMax = 5, sided=2, beta=0.2)
+
+# create object that stores all boundaries with each row representing stage 1-5
+fo_of_bounds &lt;- cbind( futility = c(fo_of$futilityBounds, fo_of$criticalValues[5]),
+                       efficacy = fo_of$criticalValues)
+
+# since we using |Z|, we can replace our NA futility bound with 0 since it reflects an impossible stopping point at the first stage
+fo_of_bounds[ is.na(fo_of_bounds )] &lt;- 0
+
+
+## Two-sided efficacy only with O&#39;Brien-Fleming-like alpha-spending boundaries
+eo_of &lt;- getDesignGroupSequential(typeOfDesign = &quot;OF&quot;, kMax = 5, sided=2, alpha=0.05) # O&#39;Brien-Fleming
+
+# create object that stores all boundaries with each row representing stage 1-5
+# note, no futility monitoring in this design so we will place all values as 0 at stages 1-4
+eo_of_bounds &lt;- cbind( futility = c(rep(0,4), fo_of$criticalValues[5]),
+                       efficacy = eo_of$criticalValues)
+
+
+## Two-sided efficacy and futility with O&#39;Brien-Fleming-like alpha/beta-spending boundaries
+ef_of &lt;- getDesignGroupSequential(typeOfDesign = &quot;asOF&quot;, alpha=0.05, 
+                                 typeBetaSpending = &quot;bsOF&quot;, # Pocock futility boundaries
+                                 bindingFutility = FALSE, kMax = 5, sided=2, beta=0.2)
+
+# create object that stores all boundaries with each row representing stage 1-5
+ef_of_bounds &lt;- cbind( futility = c(ef_of$futilityBounds, ef_of$criticalValues[5]),
+                       efficacy = ef_of$criticalValues)
+# since we using |Z|, we can replace our NA futility bound with 0 since it reflects an impossible stopping point at the first stage
+ef_of_bounds[ is.na(ef_of_bounds )] &lt;- 0
+
+
+## Two-sided efficacy and futility with Pocock-like alpha/beta-spending boundaries
+ef_p &lt;- getDesignGroupSequential(typeOfDesign = &quot;asP&quot;, alpha=0.05, 
+                                 typeBetaSpending = &quot;bsP&quot;, # Pocock futility boundaries
+                                 bindingFutility = FALSE, kMax = 5, sided=2, beta=0.2)
+
+# create object that stores all boundaries with each row representing stage 1-5
+ef_p_bounds &lt;- cbind( futility = c(ef_p$futilityBounds, ef_p$criticalValues[5]),
+                       efficacy = ef_p$criticalValues)
+# since we using |Z|, we can replace our NA futility bound with 0 since it reflects an impossible stopping point at the first stage
+ef_p_bounds[ is.na(ef_p_bounds )] &lt;- 0
+
+
+## Fixed sample design
+fs_bounds &lt;- cbind( futility = c(rep(0,4), qnorm(0.975) ),
+                    efficacy = c(rep(Inf,4), qnorm(0.975)) )</code></pre>
+<p>In addition to estimating the boundaries, we created an object we can
+use for reference in the simulation study:</p>
+<pre class="r"><code># print example of bounds for two-sided OBF for futility and efficacy
+ef_of_bounds</code></pre>
+<pre><code>##       futility efficacy
+## [1,] 0.0000000 4.876885
+## [2,] 0.2915710 3.357012
+## [3,] 0.9222367 2.680280
+## [4,] 1.5176415 2.289817
+## [5,] 2.0310320 2.031032</code></pre>
+<p>Since we are leveraging that the boundaries are symmetric, we replace
+the stage 1 futility <code>NA</code> boundary with a 0, since <span
+class="math inline">\(Pr(|Z|&lt;0)=0\)</span>. Likewise, for the fixed
+sample design we see:</p>
+<pre class="r"><code># print fixed sample boundaries
+fs_bounds</code></pre>
+<pre><code>##      futility efficacy
+## [1,] 0.000000      Inf
+## [2,] 0.000000      Inf
+## [3,] 0.000000      Inf
+## [4,] 0.000000      Inf
+## [5,] 1.959964 1.959964</code></pre>
+<p>For efficacy, we know <span
+class="math inline">\(Pr(|Z|&gt;\infty)=0\)</span>, representing a case
+where we cannot stop for futility or efficacy until the trial has
+concluded.</p>
+<p>For each scenario we will simulate data for 1000 hypothetical trials,
+apply our stopping rules, and summarize the:</p>
+<ul>
+<li>Rejection rate for each scenario (e.g., type I error rate for null
+scenarios, power for alternative scenarios)</li>
+<li>Expected sample size and its standard deviation</li>
+<li>Average stopping stage and its standard deviation (directly related
+to ESS, but may be nice to present in different ways)</li>
+<li>Proportion of simulated trials stopping early and for what
+reason</li>
+</ul>
+<div id="null-scenario-results" class="section level2">
+<h2>Null Scenario Results</h2>
+<p>The code for implementing the simulation study is hidden, but you may
+unhide it if you wish to modify the code and re-run on your own.</p>
+<pre class="r fold-hide"><code>### Step 1: Define simulation parameters for null scenario, these will be easily modifiable for any other scenario
+# Notice some of these may seem redundant (e.g., sd1=sd2=1, but are definitely separately to give you flexibility to choose different parameters by study arm)
+mean1 &lt;- 0 # arm 1 mean
+mean2 &lt;- 0 # arm 2 mean
+sd1 &lt;- 1 # arm 1 sd
+sd2 &lt;- 1 # arm 2 sd
+n1 &lt;- 100 # arm 1 sample size
+n2 &lt;- 100 # arm 2 sample size
+nsim &lt;- 1000 # set number of simulations, can decrease to run more quickly or increase for more precision in estimates
+seed &lt;- 5145 # set seed for reproducibility
+
+
+### Step 2: Simulate data
+# Here we will leverage the vectorization in R to minimize the use of for-loops
+# We will simulate a matrix for each study arm, with n=100 rows and 1000 columns
+set.seed(seed)
+
+arm1 &lt;- matrix( rnorm(n=n1*nsim, mean=mean1, sd=sd1), ncol=nsim )
+arm2 &lt;- matrix( rnorm(n=n2*nsim, mean=mean2, sd=sd2), ncol=nsim )
+
+
+### Step 3: Calculate absolute Z-scores for each simulated study at each interim stage (and final)
+# We will use this in step 4 to determine when, if at all, we stop
+# Here we leverage sapply, but you could also accomplish the same approach with a for loop
+# We are sapply/looping through the information fractions, which we round at each stage to whole number in case our n1/n2 are not nicely broken out by the 5 total looks
+
+# We will first write a helper function to take a given information fraction and implement a GLM to estimate our critical value for a linear regression (note, while it returns a t-value, since n=100 t_100 and Z are very similar):
+
+helper_t &lt;- function(inf_fracs=c(0.2,0.4,0.6,0.8,1.0), arm1v, arm2v){
+### Helper function to estimate Z-scores given data sets and information fractions
+# inf_fracs: vector of information fractions to use, default is c(0.2,0.4,0.6,0.8,1.0)
+# arm1v/arm2v: vectors with single study of data for arm1 and arm2 to apply inf_fracs to
+  
+  n_arm1 &lt;- round( length(arm1v)*inf_fracs ) # round to ensure whole numbers
+  n_arm2 &lt;- round( length(arm2v)*inf_fracs ) # round to ensure whole numbers
+  
+  # extract |t| value for each interim fraction
+  sapply(1:length(inf_fracs), function(i) abs( summary(glm( c(arm1v[ 1:n_arm1[i] ], arm2v[ 1:n_arm2[i] ] ) ~ c(rep(0,n_arm1[i]), rep(1,n_arm2[i])) ))$coefficients[2,3] ) )
+}
+
+# Implement helper function to estimate all test statistics
+t_stats &lt;- sapply(1:nsim, function(x) helper_t(arm1v = arm1[,x], arm2v = arm2[,x])  )
+
+
+### Step 4: Apply stopping rules to each design to determine study outcome (e.g., number of stages, if study rejected H0, character description)
+
+# We will write an additional helper functions to take a single trial&#39;s statistics and return if/when it stops and why: 
+
+stop_func &lt;- function(test_statsv, boundary_mat){
+### Function to estimate rejection rate for each design and average stopping boundary
+# test_statsv: vector of single trial&#39;s test statistics
+  
+  # Determine where each test statistic falls with respect to stopping interval at each stage, where 0=would stop for futility, 1=continues, 2=would stop for efficacy
+  interval &lt;- sapply(1:length(test_statsv), function(x) findInterval( test_statsv[x], vec=boundary_mat[x,] ) )
+  
+  # Determine if early stopping (0 or 2) occurs
+  if( sum( interval[ 1:(length(test_statsv)-1)] %in% c(0,2) ) &gt; 0 ){
+    nstage &lt;- which( interval[ 1:(length(test_statsv)-1)] %in% c(0,2) )[1] # extract first segment location where stopping occurred
+    sig_ind &lt;- if( interval[nstage]==0 ){0}else if( interval[nstage]==2 ){1}else{ NA } # return if H0 rejected at interim look, NA to troubleshoot errors
+    stop_des &lt;- if( interval[nstage]==0 ){&#39;1_futility_stop&#39;}else{&#39;2_efficacy_stop&#39;}
+  }else{
+    nstage &lt;- length(test_statsv)
+    sig_ind &lt;- if( interval[ length(test_statsv) ] == 2 ){1}else{0}
+    stop_des &lt;- &#39;3_full_enrollment&#39;
+  }
+  
+  # return all 3 elements
+  return( c(nstage, sig_ind, stop_des) )
+}
+
+sim_res_fo_of &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=fo_of_bounds))
+sim_res_eo_of &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=eo_of_bounds))
+sim_res_ef_of &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=ef_of_bounds))
+sim_res_ef_p  &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=ef_p_bounds))
+sim_res_fs    &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=fs_bounds))
+
+# Create list of results
+sim_list &lt;- list(sim_res_fo_of, sim_res_eo_of, sim_res_ef_of, sim_res_ef_p, sim_res_fs)
+
+### Step 5: Process the data and create a table for displaying results
+library(kableExtra)
+
+# Create helper function to force rounding to set number of digits, including 0&#39;s
+roundx &lt;- function(x, ndigit=2){format(round(x, ndigit), nsmall = ndigit)}
+
+# Estimate mean (SD) stopping point
+sp_mean_sum &lt;- sapply(1:length(sim_list), function(x) mean( as.numeric(sim_list[[x]][1,])) )
+sp_sd_sum   &lt;- sapply(1:length(sim_list), function(x) sd( as.numeric(sim_list[[x]][1,])) )
+sp_merge &lt;- paste0( roundx(sp_mean_sum,2), &#39; (&#39;, roundx(sp_sd_sum,2), &#39;)&#39;)
+
+# Estimate corresponding sample size based on stopping point
+n_stage &lt;- round(seq(0.2,1,by=0.2)*n1) + round(seq(0.2,1,by=0.2)*n2) # estimate total N at each stage
+ess_mean &lt;- sapply(1:length(sim_list), function(x) mean( n_stage[ as.numeric(sim_list[[x]][1,]) ] ) )
+ess_sd &lt;- sapply(1:length(sim_list), function(x) sd( n_stage[ as.numeric(sim_list[[x]][1,]) ] ) )
+ess_merge &lt;- paste0( roundx(ess_mean,1), &#39; (&#39;, roundx(ess_sd,1), &#39;)&#39;)
+
+# Estimate rejection rate
+rr_sum &lt;- sapply(1:length(sim_list), function(x) mean( as.numeric(sim_list[[x]][2,])) )
+rr_sum &lt;- paste0( roundx( 100*rr_sum, 1), &quot;%&quot;)
+
+# Calculate % for descriptive summary of stopping
+tab_sum &lt;- sapply(1:length(sim_list), function(x) table( factor(sim_list[[x]][3,], levels=c(&#39;1_futility_stop&#39;,&#39;2_efficacy_stop&#39;,&#39;3_full_enrollment&#39;) )) ) 
+tab_sum_per &lt;- matrix( paste0(roundx(100*(tab_sum / nsim), 1), &quot;%&quot;), ncol=3, byrow=T)
+
+# Combine results with kableExtra
+kbl_tab &lt;- cbind( rr_sum, ess_merge, sp_merge, tab_sum_per)
+rownames(kbl_tab) &lt;- c(&quot;O&#39;Brien-Fleming Futility Only&quot;,&quot;O&#39;Brien-Fleming Efficacy Only&quot;,&quot;O&#39;Brien-Fleming Efficacy+Futility&quot;,&quot;Pocock Efficacy+Futility&quot;,&quot;Fixed Sample Design&quot;)
+
+
+kbl_tab %&gt;%
+  kbl(col.names=c(&#39;Stopping Rules&#39;,&#39;Rejection Rate&#39;,&#39;ESS (SD)&#39;,&#39;Avg Stop Segment (SD)&#39;,&#39;Futility&#39;,&#39;Efficacy&#39;,&#39;No Stop&#39;)) %&gt;%
+  kable_classic() %&gt;%
+  add_header_above(c(&quot; &quot;=1, &quot; &quot;=1, &quot; &quot;=1, &quot; &quot;=1, &quot;% Stopping Type&quot;=3))</code></pre>
+<table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<div style="border-bottom: 1px solid #111111; margin-bottom: -1px; ">
+% Stopping Type
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+Stopping Rules
+</th>
+<th style="text-align:left;">
+Rejection Rate
+</th>
+<th style="text-align:left;">
+ESS (SD)
+</th>
+<th style="text-align:left;">
+Avg Stop Segment (SD)
+</th>
+<th style="text-align:left;">
+Futility
+</th>
+<th style="text-align:left;">
+Efficacy
+</th>
+<th style="text-align:left;">
+No Stop
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+O’Brien-Fleming Futility Only
+</td>
+<td style="text-align:left;">
+3.4%
+</td>
+<td style="text-align:left;">
+127.4 (37.0)
+</td>
+<td style="text-align:left;">
+3.19 (0.92)
+</td>
+<td style="text-align:left;">
+89.1%
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+10.9%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+O’Brien-Fleming Efficacy Only
+</td>
+<td style="text-align:left;">
+4.7%
+</td>
+<td style="text-align:left;">
+198.8 ( 9.1)
+</td>
+<td style="text-align:left;">
+4.97 (0.23)
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+2.1%
+</td>
+<td style="text-align:left;">
+97.9%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+O’Brien-Fleming Efficacy+Futility
+</td>
+<td style="text-align:left;">
+3.9%
+</td>
+<td style="text-align:left;">
+125.8 (35.8)
+</td>
+<td style="text-align:left;">
+3.15 (0.90)
+</td>
+<td style="text-align:left;">
+89.1%
+</td>
+<td style="text-align:left;">
+2.0%
+</td>
+<td style="text-align:left;">
+8.9%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pocock Efficacy+Futility
+</td>
+<td style="text-align:left;">
+6.0%
+</td>
+<td style="text-align:left;">
+106.6 (33.5)
+</td>
+<td style="text-align:left;">
+2.66 (0.84)
+</td>
+<td style="text-align:left;">
+91.3%
+</td>
+<td style="text-align:left;">
+5.4%
+</td>
+<td style="text-align:left;">
+3.3%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Fixed Sample Design
+</td>
+<td style="text-align:left;">
+4.2%
+</td>
+<td style="text-align:left;">
+200.0 ( 0.0)
+</td>
+<td style="text-align:left;">
+5.00 (0.00)
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+100.0%
+</td>
+</tr>
+</tbody>
+</table>
+<p>Remembering that this is the null scenario where we simulated <em>no
+difference</em> between study arms, we can take away numerous nuggets of
+information:</p>
+<ul>
+<li>Having the fixed sample design is important to describe what the
+expected type I error rate (i.e., rejection rate) is for our simulated
+data. While <span class="math inline">\(\alpha=0.05\)</span>, we see
+that in this simulation of 1000 trials the observed type I error rate
+was 4.2%. In other words, <span class="math inline">\(1000 \times 0.042
+= 42\)</span> trials rejected the null hypothesis that <span
+class="math inline">\(\mu_1 = \mu_2\)</span>, even though we simulated
+data where the means were equal.</li>
+<li>In terms of type I error control, relative to the fixed sample
+design:
+<ul>
+<li>The OBF designs with futility have lower type I error rates</li>
+<li>The OBF efficacy only and Pocock E+F designs have increased type I
+error rates</li>
+</ul></li>
+<li>In terms of the expected sample size:
+<ul>
+<li>Interim monitoring helped to reduce the average sample size needed
+until study termination</li>
+<li>Pocock has the lowest ESS and average stopping point because it is
+more aggressive with early stopping</li>
+<li>The OBF efficacy only design rarely stopped, which is good since it
+would only stop for efficacy</li>
+<li>Designs with futility stopping terminated at a point prior to trial
+conclusion ~80% of the time! This represents a much more efficient
+design relative to a fixed sample design when there is no effect.</li>
+</ul></li>
+<li>Since we simulated the null scenario here, we shouldn’t stop for
+efficacy. However, we see that:
+<ul>
+<li>The OBF Efficacy Only design stopped 2.1% of the time for
+efficacy</li>
+<li>The OBF Efficacy+Futility design stopped 2.0% of the time for
+efficacy</li>
+<li>The Pocock Efficacy+Futility design stopped 5.4% of the time,
+helping to see the more aggressive stopping boundaries</li>
+</ul></li>
+</ul>
+<p>Of course, all of the above only considers the null scenario. For a
+complete view of the trade-offs, we should look at alternative scenarios
+as well.</p>
+</div>
+<div id="alternative-scenario-i-results" class="section level2">
+<h2>Alternative Scenario I Results</h2>
+<p>The code for implementing the simulation study is hidden, but you may
+unhide it if you wish to modify the code and re-run on your own. This
+alternative scenario simulates the effect size used in our power
+calculation to achieve 80% power. The only piece of the code we need to
+change is one of the two means (i.e., <code>mean1</code> or
+<code>mean2</code>), otherwise the code can stay as-written from the
+null scenario since it was flexibly written to handle multiple
+scenarios.</p>
+<pre class="r fold-hide"><code>### Step 1: Define simulation parameters for null scenario, these will be easily modifiable for any other scenario
+# Notice some of these may seem redundant (e.g., sd1=sd2=1, but are definitely separately to give you flexibility to choose different parameters by study arm)
+mean1 &lt;- 0 # arm 1 mean
+mean2 &lt;- 0.4 # arm 2 mean
+sd1 &lt;- 1 # arm 1 sd
+sd2 &lt;- 1 # arm 2 sd
+n1 &lt;- 100 # arm 1 sample size
+n2 &lt;- 100 # arm 2 sample size
+nsim &lt;- 1000 # set number of simulations, can decrease to run more quickly or increase for more precision in estimates
+seed &lt;- 7354 # set seed for reproducibility
+
+
+### Step 2: Simulate data
+# Here we will leverage the vectorization in R to minimize the use of for-loops
+# We will simulate a matrix for each study arm, with n=100 rows and 1000 columns
+set.seed(seed)
+
+arm1 &lt;- matrix( rnorm(n=n1*nsim, mean=mean1, sd=sd1), ncol=nsim )
+arm2 &lt;- matrix( rnorm(n=n2*nsim, mean=mean2, sd=sd2), ncol=nsim )
+
+
+### Step 3: Calculate absolute Z-scores for each simulated study at each interim stage (and final)
+# We will use this in step 4 to determine when, if at all, we stop
+# Here we leverage sapply, but you could also accomplish the same approach with a for loop
+# We are sapply/looping through the information fractions, which we round at each stage to whole number in case our n1/n2 are not nicely broken out by the 5 total looks
+
+# We will first write a helper function to take a given information fraction and implement a GLM to estimate our critical value for a linear regression (note, while it returns a t-value, since n=100 t_100 and Z are very similar):
+
+helper_t &lt;- function(inf_fracs=c(0.2,0.4,0.6,0.8,1.0), arm1v, arm2v){
+### Helper function to estimate Z-scores given data sets and information fractions
+# inf_fracs: vector of information fractions to use, default is c(0.2,0.4,0.6,0.8,1.0)
+# arm1v/arm2v: vectors with single study of data for arm1 and arm2 to apply inf_fracs to
+  
+  n_arm1 &lt;- round( length(arm1v)*inf_fracs ) # round to ensure whole numbers
+  n_arm2 &lt;- round( length(arm2v)*inf_fracs ) # round to ensure whole numbers
+  
+  # extract |t| value for each interim fraction
+  sapply(1:length(inf_fracs), function(i) abs( summary(glm( c(arm1v[ 1:n_arm1[i] ], arm2v[ 1:n_arm2[i] ] ) ~ c(rep(0,n_arm1[i]), rep(1,n_arm2[i])) ))$coefficients[2,3] ) )
+}
+
+# Implement helper function to estimate all test statistics
+t_stats &lt;- sapply(1:nsim, function(x) helper_t(arm1v = arm1[,x], arm2v = arm2[,x])  )
+
+
+### Step 4: Apply stopping rules to each design to determine study outcome (e.g., number of stages, if study rejected H0, character description)
+
+# We will write an additional helper functions to take a single trial&#39;s statistics and return if/when it stops and why: 
+
+stop_func &lt;- function(test_statsv, boundary_mat){
+### Function to estimate rejection rate for each design and average stopping boundary
+# test_statsv: vector of single trial&#39;s test statistics
+  
+  # Determine where each test statistic falls with respect to stopping interval at each stage, where 0=would stop for futility, 1=continues, 2=would stop for efficacy
+  interval &lt;- sapply(1:length(test_statsv), function(x) findInterval( test_statsv[x], vec=boundary_mat[x,] ) )
+  
+  # Determine if early stopping (0 or 2) occurs
+  if( sum( interval[ 1:(length(test_statsv)-1)] %in% c(0,2) ) &gt; 0 ){
+    nstage &lt;- which( interval[ 1:(length(test_statsv)-1)] %in% c(0,2) )[1] # extract first segment location where stopping occurred
+    sig_ind &lt;- if( interval[nstage]==0 ){0}else if( interval[nstage]==2 ){1}else{ NA } # return if H0 rejected at interim look, NA to troubleshoot errors
+    stop_des &lt;- if( interval[nstage]==0 ){&#39;1_futility_stop&#39;}else{&#39;2_efficacy_stop&#39;}
+  }else{
+    nstage &lt;- length(test_statsv)
+    sig_ind &lt;- if( interval[ length(test_statsv) ] == 2 ){1}else{0}
+    stop_des &lt;- &#39;3_full_enrollment&#39;
+  }
+  
+  # return all 3 elements
+  return( c(nstage, sig_ind, stop_des) )
+}
+
+sim_res_fo_of &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=fo_of_bounds))
+sim_res_eo_of &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=eo_of_bounds))
+sim_res_ef_of &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=ef_of_bounds))
+sim_res_ef_p  &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=ef_p_bounds))
+sim_res_fs    &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=fs_bounds))
+
+# Create list of results
+sim_list &lt;- list(sim_res_fo_of, sim_res_eo_of, sim_res_ef_of, sim_res_ef_p, sim_res_fs)
+
+### Step 5: Process the data and create a table for displaying results
+library(kableExtra)
+
+# Create helper function to force rounding to set number of digits, including 0&#39;s
+roundx &lt;- function(x, ndigit=2){format(round(x, ndigit), nsmall = ndigit)}
+
+# Estimate mean (SD) stopping point
+sp_mean_sum &lt;- sapply(1:length(sim_list), function(x) mean( as.numeric(sim_list[[x]][1,])) )
+sp_sd_sum   &lt;- sapply(1:length(sim_list), function(x) sd( as.numeric(sim_list[[x]][1,])) )
+sp_merge &lt;- paste0( roundx(sp_mean_sum,2), &#39; (&#39;, roundx(sp_sd_sum,2), &#39;)&#39;)
+
+# Estimate corresponding sample size based on stopping point
+n_stage &lt;- round(seq(0.2,1,by=0.2)*n1) + round(seq(0.2,1,by=0.2)*n2) # estimate total N at each stage
+ess_mean &lt;- sapply(1:length(sim_list), function(x) mean( n_stage[ as.numeric(sim_list[[x]][1,]) ] ) )
+ess_sd &lt;- sapply(1:length(sim_list), function(x) sd( n_stage[ as.numeric(sim_list[[x]][1,]) ] ) )
+ess_merge &lt;- paste0( roundx(ess_mean,1), &#39; (&#39;, roundx(ess_sd,1), &#39;)&#39;)
+
+# Estimate rejection rate
+rr_sum &lt;- sapply(1:length(sim_list), function(x) mean( as.numeric(sim_list[[x]][2,])) )
+rr_sum &lt;- paste0( roundx( 100*rr_sum, 1), &quot;%&quot;)
+
+# Calculate % for descriptive summary of stopping
+tab_sum &lt;- sapply(1:length(sim_list), function(x) table( factor(sim_list[[x]][3,], levels=c(&#39;1_futility_stop&#39;,&#39;2_efficacy_stop&#39;,&#39;3_full_enrollment&#39;) )) ) 
+tab_sum_per &lt;- matrix( paste0(roundx(100*(tab_sum / nsim), 1), &quot;%&quot;), ncol=3, byrow=T)
+
+# Combine results with kableExtra
+kbl_tab &lt;- cbind( rr_sum, ess_merge, sp_merge, tab_sum_per)
+rownames(kbl_tab) &lt;- c(&quot;O&#39;Brien-Fleming Futility Only&quot;,&quot;O&#39;Brien-Fleming Efficacy Only&quot;,&quot;O&#39;Brien-Fleming Efficacy+Futility&quot;,&quot;Pocock Efficacy+Futility&quot;,&quot;Fixed Sample Design&quot;)
+
+
+kbl_tab %&gt;%
+  kbl(col.names=c(&#39;Stopping Rules&#39;,&#39;Rejection Rate&#39;,&#39;ESS (SD)&#39;,&#39;Avg Stop Segment (SD)&#39;,&#39;Futility&#39;,&#39;Efficacy&#39;,&#39;No Stop&#39;)) %&gt;%
+  kable_classic() %&gt;%
+  add_header_above(c(&quot; &quot;=1, &quot; &quot;=1, &quot; &quot;=1, &quot; &quot;=1, &quot;% Stopping Type&quot;=3))</code></pre>
+<table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<div style="border-bottom: 1px solid #111111; margin-bottom: -1px; ">
+% Stopping Type
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+Stopping Rules
+</th>
+<th style="text-align:left;">
+Rejection Rate
+</th>
+<th style="text-align:left;">
+ESS (SD)
+</th>
+<th style="text-align:left;">
+Avg Stop Segment (SD)
+</th>
+<th style="text-align:left;">
+Futility
+</th>
+<th style="text-align:left;">
+Efficacy
+</th>
+<th style="text-align:left;">
+No Stop
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+O’Brien-Fleming Futility Only
+</td>
+<td style="text-align:left;">
+74.7%
+</td>
+<td style="text-align:left;">
+186.6 (32.0)
+</td>
+<td style="text-align:left;">
+4.67 (0.80)
+</td>
+<td style="text-align:left;">
+17.7%
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+82.3%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+O’Brien-Fleming Efficacy Only
+</td>
+<td style="text-align:left;">
+79.9%
+</td>
+<td style="text-align:left;">
+158.7 (40.2)
+</td>
+<td style="text-align:left;">
+3.97 (1.00)
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+60.9%
+</td>
+<td style="text-align:left;">
+39.1%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+O’Brien-Fleming Efficacy+Futility
+</td>
+<td style="text-align:left;">
+75.4%
+</td>
+<td style="text-align:left;">
+146.9 (38.1)
+</td>
+<td style="text-align:left;">
+3.67 (0.95)
+</td>
+<td style="text-align:left;">
+18.2%
+</td>
+<td style="text-align:left;">
+59.9%
+</td>
+<td style="text-align:left;">
+21.9%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pocock Efficacy+Futility
+</td>
+<td style="text-align:left;">
+66.7%
+</td>
+<td style="text-align:left;">
+117.7 (48.8)
+</td>
+<td style="text-align:left;">
+2.94 (1.22)
+</td>
+<td style="text-align:left;">
+28.1%
+</td>
+<td style="text-align:left;">
+59.8%
+</td>
+<td style="text-align:left;">
+12.1%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Fixed Sample Design
+</td>
+<td style="text-align:left;">
+79.8%
+</td>
+<td style="text-align:left;">
+200.0 ( 0.0)
+</td>
+<td style="text-align:left;">
+5.00 (0.00)
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+100.0%
+</td>
+</tr>
+</tbody>
+</table>
+<p>Remembering that this is the alternative scenario where we simulated
+a difference of <span class="math inline">\(\delta=0.4\)</span> between
+study arms which was used to estimate the sample size needed for 80%
+power, we can take away numerous nuggets of information:</p>
+<ul>
+<li>Having the fixed sample design is important to describe what the
+expected power (i.e., rejection rate) is for our simulated data. While
+<span class="math inline">\(\beta=0.2\)</span>, we see that in this
+simulation of 1000 trials the observed power was 79.8%, which is quite
+close to the target of 80%.</li>
+<li>In terms of power, relative to the fixed sample design:
+<ul>
+<li>All designs with futility monitoring for these boundaries have
+reduced power (~5% less for OBF, but 13.1% less for Pocock!)</li>
+<li>The OBF efficacy only design has slightly higher power at 79.9%
+(i.e., 1 more out of 1000 simulated trials was found to be significant
+compared to the fixed sample design)</li>
+</ul></li>
+<li>In terms of the expected sample size:
+<ul>
+<li>All designs show a lower ESS than the fixed sample design</li>
+<li>The OBF efficacy design has slightly higher power <em>and an ESS
+that is about 41 participants lower</em>. We see based on the average
+stopping segment that it is stopping, on average, after 80% of
+participants have been observed.</li>
+<li>The Pocock design has the lowest ESS, but this is because it stops
+for futility aggressively 28.1% of the time, even though we simulated
+data with a difference.</li>
+</ul></li>
+</ul>
+<p>We need to balance these results with performance under the null
+scenario, taking into account if we are willing to tolerate reductions
+in power for the trade-off of more futility stopping in the null, or
+vice versa.</p>
+<div id="note-on-futility-stopping-under-the-alternative"
+class="section level3">
+<h3>Note on Futility Stopping Under the Alternative</h3>
+<p>An interesting quirk worth noting is that futility stopping may still
+be beneficial in some settings. For example, our target is 80% power,
+meaning that 20% of the time our study will not detect the effect even
+though it exists. For the 20% of trials that were not significant, it
+still may be helpful to stop the trial early to conserve resources.</p>
+<p>For example, let’s observe the confusion matrix of the OBF design
+stopping for efficacy and futility with the fixed sample design:</p>
+<pre class="r"><code>table( OBF = sim_res_ef_of[2,], FS = sim_res_fs[2,])</code></pre>
+<pre><code>##    FS
+## OBF   0   1
+##   0 186  60
+##   1  16 738</code></pre>
+<p>From this table, we see that of the 202 simulated trials that didn’t
+detect the effect, 92.1% (186/202) stopped for futility early. The
+trade-off, of course, is that we see of the 798 trials the did detect an
+effect, 7.5% (60/798) stopped for futility that would have gone on to
+reject the null hypothesis. The final piece of information to note is
+that 7.9% (16/202) of trials where the fixed sample did not reject <span
+class="math inline">\(H_0\)</span>, the OBF approach stopped early for
+efficacy and detected an effect.</p>
+<p>It can be hard to juggle all these conflicting pieces of information,
+but it does highlight that we are often interested in trying to minimize
+the trade-off that harms out overall trial performance. In this case,
+the OBF design stopping for both efficacy and futility does reduce power
+to 75.4% from 79.8% in the fixed design, but it does so with a reduced
+type I error rate in the null scenario with a large reduction in
+ESS.</p>
+<p>However, it is worth noting in practice we don’t know if a trial
+stopping for futility is truly null, or we happened to observe something
+null-ish by chance. To address this, we may wish to evaluate other
+adaptive elements like sample size re-estimation to increase the
+probability of conducting a successful trial.</p>
+</div>
+</div>
+<div id="alternative-scenario-ii-results" class="section level2">
+<h2>Alternative Scenario II Results</h2>
+<p>The code for implementing the simulation study is hidden, but you may
+unhide it if you wish to modify the code and re-run on your own. This
+alternative scenario simulates the half of the effect size used in our
+power calculation to achieve 80% power. The only piece of the code we
+need to change is one of the two means (i.e., <code>mean1</code> or
+<code>mean2</code>), otherwise the code can stay as-written from the
+null scenario since it was flexibly written to handle multiple
+scenarios.</p>
+<pre class="r fold-hide"><code>### Step 1: Define simulation parameters for null scenario, these will be easily modifiable for any other scenario
+# Notice some of these may seem redundant (e.g., sd1=sd2=1, but are definitely separately to give you flexibility to choose different parameters by study arm)
+mean1 &lt;- 0 # arm 1 mean
+mean2 &lt;- 0.2 # arm 2 mean
+sd1 &lt;- 1 # arm 1 sd
+sd2 &lt;- 1 # arm 2 sd
+n1 &lt;- 100 # arm 1 sample size
+n2 &lt;- 100 # arm 2 sample size
+nsim &lt;- 1000 # set number of simulations, can decrease to run more quickly or increase for more precision in estimates
+seed &lt;- 7811 # set seed for reproducibility
+
+
+### Step 2: Simulate data
+# Here we will leverage the vectorization in R to minimize the use of for-loops
+# We will simulate a matrix for each study arm, with n=100 rows and 1000 columns
+set.seed(seed)
+
+arm1 &lt;- matrix( rnorm(n=n1*nsim, mean=mean1, sd=sd1), ncol=nsim )
+arm2 &lt;- matrix( rnorm(n=n2*nsim, mean=mean2, sd=sd2), ncol=nsim )
+
+
+### Step 3: Calculate absolute Z-scores for each simulated study at each interim stage (and final)
+# We will use this in step 4 to determine when, if at all, we stop
+# Here we leverage sapply, but you could also accomplish the same approach with a for loop
+# We are sapply/looping through the information fractions, which we round at each stage to whole number in case our n1/n2 are not nicely broken out by the 5 total looks
+
+# We will first write a helper function to take a given information fraction and implement a GLM to estimate our critical value for a linear regression (note, while it returns a t-value, since n=100 t_100 and Z are very similar):
+
+helper_t &lt;- function(inf_fracs=c(0.2,0.4,0.6,0.8,1.0), arm1v, arm2v){
+### Helper function to estimate Z-scores given data sets and information fractions
+# inf_fracs: vector of information fractions to use, default is c(0.2,0.4,0.6,0.8,1.0)
+# arm1v/arm2v: vectors with single study of data for arm1 and arm2 to apply inf_fracs to
+  
+  n_arm1 &lt;- round( length(arm1v)*inf_fracs ) # round to ensure whole numbers
+  n_arm2 &lt;- round( length(arm2v)*inf_fracs ) # round to ensure whole numbers
+  
+  # extract |t| value for each interim fraction
+  sapply(1:length(inf_fracs), function(i) abs( summary(glm( c(arm1v[ 1:n_arm1[i] ], arm2v[ 1:n_arm2[i] ] ) ~ c(rep(0,n_arm1[i]), rep(1,n_arm2[i])) ))$coefficients[2,3] ) )
+}
+
+# Implement helper function to estimate all test statistics
+t_stats &lt;- sapply(1:nsim, function(x) helper_t(arm1v = arm1[,x], arm2v = arm2[,x])  )
+
+
+### Step 4: Apply stopping rules to each design to determine study outcome (e.g., number of stages, if study rejected H0, character description)
+
+# We will write an additional helper functions to take a single trial&#39;s statistics and return if/when it stops and why: 
+
+stop_func &lt;- function(test_statsv, boundary_mat){
+### Function to estimate rejection rate for each design and average stopping boundary
+# test_statsv: vector of single trial&#39;s test statistics
+  
+  # Determine where each test statistic falls with respect to stopping interval at each stage, where 0=would stop for futility, 1=continues, 2=would stop for efficacy
+  interval &lt;- sapply(1:length(test_statsv), function(x) findInterval( test_statsv[x], vec=boundary_mat[x,] ) )
+  
+  # Determine if early stopping (0 or 2) occurs
+  if( sum( interval[ 1:(length(test_statsv)-1)] %in% c(0,2) ) &gt; 0 ){
+    nstage &lt;- which( interval[ 1:(length(test_statsv)-1)] %in% c(0,2) )[1] # extract first segment location where stopping occurred
+    sig_ind &lt;- if( interval[nstage]==0 ){0}else if( interval[nstage]==2 ){1}else{ NA } # return if H0 rejected at interim look, NA to troubleshoot errors
+    stop_des &lt;- if( interval[nstage]==0 ){&#39;1_futility_stop&#39;}else{&#39;2_efficacy_stop&#39;}
+  }else{
+    nstage &lt;- length(test_statsv)
+    sig_ind &lt;- if( interval[ length(test_statsv) ] == 2 ){1}else{0}
+    stop_des &lt;- &#39;3_full_enrollment&#39;
+  }
+  
+  # return all 3 elements
+  return( c(nstage, sig_ind, stop_des) )
+}
+
+sim_res_fo_of &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=fo_of_bounds))
+sim_res_eo_of &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=eo_of_bounds))
+sim_res_ef_of &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=ef_of_bounds))
+sim_res_ef_p  &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=ef_p_bounds))
+sim_res_fs    &lt;- sapply( 1:ncol(t_stats), function(y) stop_func(test_statsv=t_stats[,y], boundary_mat=fs_bounds))
+
+# Create list of results
+sim_list &lt;- list(sim_res_fo_of, sim_res_eo_of, sim_res_ef_of, sim_res_ef_p, sim_res_fs)
+
+### Step 5: Process the data and create a table for displaying results
+library(kableExtra)
+
+# Create helper function to force rounding to set number of digits, including 0&#39;s
+roundx &lt;- function(x, ndigit=2){format(round(x, ndigit), nsmall = ndigit)}
+
+# Estimate mean (SD) stopping point
+sp_mean_sum &lt;- sapply(1:length(sim_list), function(x) mean( as.numeric(sim_list[[x]][1,])) )
+sp_sd_sum   &lt;- sapply(1:length(sim_list), function(x) sd( as.numeric(sim_list[[x]][1,])) )
+sp_merge &lt;- paste0( roundx(sp_mean_sum,2), &#39; (&#39;, roundx(sp_sd_sum,2), &#39;)&#39;)
+
+# Estimate corresponding sample size based on stopping point
+n_stage &lt;- round(seq(0.2,1,by=0.2)*n1) + round(seq(0.2,1,by=0.2)*n2) # estimate total N at each stage
+ess_mean &lt;- sapply(1:length(sim_list), function(x) mean( n_stage[ as.numeric(sim_list[[x]][1,]) ] ) )
+ess_sd &lt;- sapply(1:length(sim_list), function(x) sd( n_stage[ as.numeric(sim_list[[x]][1,]) ] ) )
+ess_merge &lt;- paste0( roundx(ess_mean,1), &#39; (&#39;, roundx(ess_sd,1), &#39;)&#39;)
+
+# Estimate rejection rate
+rr_sum &lt;- sapply(1:length(sim_list), function(x) mean( as.numeric(sim_list[[x]][2,])) )
+rr_sum &lt;- paste0( roundx( 100*rr_sum, 1), &quot;%&quot;)
+
+# Calculate % for descriptive summary of stopping
+tab_sum &lt;- sapply(1:length(sim_list), function(x) table( factor(sim_list[[x]][3,], levels=c(&#39;1_futility_stop&#39;,&#39;2_efficacy_stop&#39;,&#39;3_full_enrollment&#39;) )) ) 
+tab_sum_per &lt;- matrix( paste0(roundx(100*(tab_sum / nsim), 1), &quot;%&quot;), ncol=3, byrow=T)
+
+# Combine results with kableExtra
+kbl_tab &lt;- cbind( rr_sum, ess_merge, sp_merge, tab_sum_per)
+rownames(kbl_tab) &lt;- c(&quot;O&#39;Brien-Fleming Futility Only&quot;,&quot;O&#39;Brien-Fleming Efficacy Only&quot;,&quot;O&#39;Brien-Fleming Efficacy+Futility&quot;,&quot;Pocock Efficacy+Futility&quot;,&quot;Fixed Sample Design&quot;)
+
+
+kbl_tab %&gt;%
+  kbl(col.names=c(&#39;Stopping Rules&#39;,&#39;Rejection Rate&#39;,&#39;ESS (SD)&#39;,&#39;Avg Stop Segment (SD)&#39;,&#39;Futility&#39;,&#39;Efficacy&#39;,&#39;No Stop&#39;)) %&gt;%
+  kable_classic() %&gt;%
+  add_header_above(c(&quot; &quot;=1, &quot; &quot;=1, &quot; &quot;=1, &quot; &quot;=1, &quot;% Stopping Type&quot;=3))</code></pre>
+<table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<div style="border-bottom: 1px solid #111111; margin-bottom: -1px; ">
+% Stopping Type
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+Stopping Rules
+</th>
+<th style="text-align:left;">
+Rejection Rate
+</th>
+<th style="text-align:left;">
+ESS (SD)
+</th>
+<th style="text-align:left;">
+Avg Stop Segment (SD)
+</th>
+<th style="text-align:left;">
+Futility
+</th>
+<th style="text-align:left;">
+Efficacy
+</th>
+<th style="text-align:left;">
+No Stop
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+O’Brien-Fleming Futility Only
+</td>
+<td style="text-align:left;">
+25.5%
+</td>
+<td style="text-align:left;">
+153.0 (43.9)
+</td>
+<td style="text-align:left;">
+3.82 (1.10)
+</td>
+<td style="text-align:left;">
+61.9%
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+38.1%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+O’Brien-Fleming Efficacy Only
+</td>
+<td style="text-align:left;">
+28.1%
+</td>
+<td style="text-align:left;">
+189.7 (24.3)
+</td>
+<td style="text-align:left;">
+4.74 (0.61)
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+18.0%
+</td>
+<td style="text-align:left;">
+82.0%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+O’Brien-Fleming Efficacy+Futility
+</td>
+<td style="text-align:left;">
+24.9%
+</td>
+<td style="text-align:left;">
+142.7 (39.4)
+</td>
+<td style="text-align:left;">
+3.57 (0.99)
+</td>
+<td style="text-align:left;">
+62.2%
+</td>
+<td style="text-align:left;">
+17.4%
+</td>
+<td style="text-align:left;">
+20.4%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pocock Efficacy+Futility
+</td>
+<td style="text-align:left;">
+22.8%
+</td>
+<td style="text-align:left;">
+118.5 (41.3)
+</td>
+<td style="text-align:left;">
+2.96 (1.03)
+</td>
+<td style="text-align:left;">
+71.0%
+</td>
+<td style="text-align:left;">
+19.8%
+</td>
+<td style="text-align:left;">
+9.2%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Fixed Sample Design
+</td>
+<td style="text-align:left;">
+29.6%
+</td>
+<td style="text-align:left;">
+200.0 ( 0.0)
+</td>
+<td style="text-align:left;">
+5.00 (0.00)
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+0.0%
+</td>
+<td style="text-align:left;">
+100.0%
+</td>
+</tr>
+</tbody>
+</table>
+<p>In this scenario, we simulated a design where there is an effect, but
+it is only half that of what we used for the power calculation (i.e.,
+<span class="math inline">\(\delta=0.2\)</span> in this simulation
+versus <span class="math inline">\(\delta=0.4\)</span> used in our power
+calculation). If this effect size is no longer clinically relevant, we
+would hope to stop for futility without having to carry out the entire
+study. If this effect is relevant, other adaptive methods like sample
+size re-estimation are needed to increase our power.</p>
+<p>For this scenario, we see that designs with futility monitoring stop
+between 61.9-72.2% of the time. The power of the fixed sample design is
+low at 29.6%, with all designs including any interim monitoring showing
+lower power. This is partially due to futility monitoring if
+implemented, but also because the final testing threshold is adjusted
+for multiple testing making it harder to reject. Likely, many of the
+cases that are discordant are because the test statistic fell between
+<code>qnorm(0.975)</code>=1.96 and the adjusted threshold for each
+method.</p>
+</div>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+<p>Below are some references to highlight based on the slides and
+code:</p>
+<ul>
+<li><p><a
+href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adaptive-design-clinical-trials-drugs-and-biologics-guidance-industry">FDA
+Adaptive Design Clinical Trials for Drugs and Biologics Guidance for
+Industry Guidance Document</a>: FDA guidance document on adaptive trial
+elements</p></li>
+<li><p><a
+href="https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/recent-innovations-in-adaptive-trial-designs-a-review-of-design-opportunities-in-translational-research/614EAFEA5E89CA035E82E152AF660E5D?utm_campaign=shareaholic&amp;utm_medium=copy_link&amp;utm_source=bookmark">Recent
+innovations in adaptive trial designs: A review of design opportunities
+in translational research</a>: 2023 review paper examining adaptive and
+novel trial elements with included case studies</p></li>
+<li><p><a
+href="https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/guidance-on-interim-analysis-methods-in-clinical-trials/5051FDCF5284970B3DB01FE609AAA4C2?utm_campaign=shareaholic&amp;utm_medium=copy_link&amp;utm_source=bookmark">Guidance
+on interim analysis methods in clinical trials</a>: 2023 review paper
+focusing on interim analyses in clinical trials with included case
+studies</p></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

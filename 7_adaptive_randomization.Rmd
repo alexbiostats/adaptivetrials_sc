@@ -1,0 +1,48 @@
+---
+title: "Adaptive Randomization"
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE
+)
+```
+
+
+# Overview
+
+Randomization serves as our causal mechanism to draw conclusions about the effect of an intervention in a clinical trial. However, there are many approaches to randomization including both static (i.e., fixed) and dynamic (i.e., changing) ratios. In this module we first do a brief review of static randomization approaches before diving into three unique adaptive randomization (AR) approaches to modify a study's allocation ratio: baseline covariate AR, outcome/response AR, and information balance AR.
+
+
+# Slide Deck
+
+<iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/1634ab53e8c74d38af22737e1374fb44" title="Adaptive Randomization" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+
+&nbsp;
+
+You can also download the [original PowerPoint file](./files/Slides/7_adaptive_randomization.pptx).
+
+
+# Code Examples in R
+
+Various packages exist to assist in implementing randomization approaches in R:
+
+* [`randomizeR`](https://cran.r-project.org/web/packages/randomizeR/index.html): implements static randomization schema, with a [Journal of Statistical Software](https://www.ideal.rwth-aachen.de/wp-content/uploads/2017/11/article_accepted.pdf) article to follow along for more information
+* [`carat`](https://cran.r-project.org/web/packages/carat/index.html): implements covariate adaptive randomization designs (six different strategies included as of package version 2.2.1), with support to implement the appropriate statistical analysis after data has been collected
+* [`RARfreq`](https://cran.rstudio.com/web/packages/RARfreq/index.html): implements response-adaptive randomization procedures
+* Information balance AR approaches generally have to be custom coded with the choice of information borrowing software.
+
+
+# References
+
+Below are some references to highlight based on the slides and code:
+
+* [FDA Adaptive Design Clinical Trials for Drugs and Biologics Guidance for Industry Guidance Document](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adaptive-design-clinical-trials-drugs-and-biologics-guidance-industry): FDA guidance document on adaptive trial elements
+
+* [Recent innovations in adaptive trial designs: A review of design opportunities in translational research](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/recent-innovations-in-adaptive-trial-designs-a-review-of-design-opportunities-in-translational-research/614EAFEA5E89CA035E82E152AF660E5D?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark): 2023 review paper examining adaptive and novel trial elements with included case studies

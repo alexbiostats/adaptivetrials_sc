@@ -1,0 +1,224 @@
+---
+title: "Adaptive Treatment Arm Selection"
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE
+)
+```
+
+
+# Overview
+
+There may be uncertainty as to which study arms to include in a prospective trial, especially if we have multiple doses to consider, multiple candidate therapies, or potentially limited resources to explore all options. In this module we introduce the adaptive concept of treatment arm dropping and adding.
+
+
+# Slide Deck
+
+<iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/bebd3fb80cba4dc7a3e5fb6c16608507" title="Adaptive Treatment Arm Selection" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+
+&nbsp;
+
+You can also download the [original PowerPoint file](./files/Slides/6_treatment_arm_selection.pptx).
+
+
+# Code Examples in R
+
+Within R there are plenty of packages to implement dose-finding algorithms, which can be thought of as a form of arm dropping:
+
+* [`CRM`](https://cran.r-project.org/web/packages/CRM/index.html): implements the continual reassessment method for phase I clinical trials
+* [`bcrm`](https://cran.r-project.org/web/packages/bcrm/index.html): implements a Bayesian version of the CRM
+* [`DoseFinding`](https://cran.r-project.org/web/packages/DoseFinding/index.html): provides functions for designing and analyzing dose-finding experiments with a focus on phase II studies
+
+For general treatment arm selection, many approaches are custom coded by the user depending on the rules used. 
+
+
+# Simulation Study
+
+For a brief simulation study, let's compare the operating characteristics for a set of different arm dropping rules:
+
+* Keep all active arms that are not dropped for futility based on one-sided Pocock stopping boundaries
+* Drop the arm with the smallest treatment effect at each stage as long as it is not statistically significant at a more generous $\alpha=0.1$ threshold
+* Drop the arm with the smallest treatment effect regardless of statistical significance so the study ends with two arms
+
+In our simulation we make the following assumptions:
+
+* There are six total arms (1 shared control, 5 treatment arms )
+* Each arm will enroll 100 if it never stops (i.e., power calculation for two-sample t-test assuming $\alpha=0.05$, $\beta=0.8$, $\delta=0.4$, $\sigma=1$)
+* We will plan for 5 total stages (i.e., 20 per stage) so that the final analysis can end with a control versus winner(s) comparison
+* We assume normally distributed outcomes with $\sigma=1$ for all arms
+* The control group mean response is 0, our 5 treatment arm responses are -0.05, 0, 0.1, 0.35, 0.4 (i.e., worse than control, same as control, three improved relative to control by differing degrees)
+* We will not make any corrections for multiple testing
+
+Now let's explore our results for the arms that remain at the end of each study, overall sample size, and the rejection rates:
+
+```{r arm-selection-sim, class.source = 'fold-hide', cache=T, warning=F}
+library(rpact) # load rpact for futility bounds
+
+fo_p1 <- getDesignGroupSequential(typeOfDesign = "asUser", alpha=0.025, userAlphaSpending = c(0,0,0,0,0.025), 
+                                 typeBetaSpending = "bsP", # Pocock futility boundaries
+                                 bindingFutility = FALSE, kMax = 5, sided=1, beta=0.2)
+fo_p1_crit <- fo_p1$futilityBounds #  extract futility boundaries
+fo_p1_crit_mat <- matrix( c(fo_p1_crit, -Inf), ncol=5, nrow=5) # create matrix to compare with test statistics in simulation, add -Inf for final comparison at end of trial
+
+# set means (m) per study arm
+mc <- 0
+m1 <- -0.05
+m2 <- 0
+m3 <- 0.1
+m4 <- 0.35
+m5 <- 0.4
+
+# set other parameters
+sc <- s1 <- s2 <- s3 <- s4 <- s5 <- 1 # common variance, could change for other scenarios
+seed <- 515 # seed for reproducibility
+nmax <- 100 # max per arm
+nstage <- 5 # total number of stages
+n_perstage <- ceiling( seq(0,100,length.out=6)[-1] ) # number enrolled in each stage (so you can change nmax, nstage, etc. and code still works)
+nsim <- 1000 # number of simulations
+
+strat1_res <- strat2_res <- strat3_res <- matrix(nrow=nsim, ncol=11) # create objects to save simulation results
+
+# simulation
+set.seed(seed) # set seed for reproducibility
+
+for( i in 1:nsim ){
+  
+  # use sapply to create matrix of data with each data set represented by a column
+  simdat <- sapply( c('c',1:5), function(x) rnorm(mean = get(paste0('m',x)), sd = get(paste0('s',x)), n=nmax) ) 
+  
+  # calculate two-sample t-tests for what the observed test statistic and p-value would be at each stage
+  # write helper function, paircompare(), to extract this information
+  paircompare <- function(arm_control, arm_trt, n_perstage){
+    ### Helper function to calculate test statistic and p-value for two groups given data and sample sizes to use
+    # arm_control/arm_trt: vector with observed data up to max sample size
+    # n_perstage: sample size after each stage
+    
+    tres <- t(sapply(n_perstage, function(z) t.test(arm_trt[1:z], arm_control[1:z], alternative = 'greater')[c('p.value','statistic')] ))
+    eres <- sapply(n_perstage, function(z) mean(arm_trt[1:z]) - mean(arm_control[1:z] ) )
+    
+    return( cbind(tres, eres) )
+  }
+  
+  res <- sapply( 2:6, function(w) paircompare(arm_control = simdat[,1], arm_trt = simdat[,w], n_perstage = n_perstage)  )
+  pval <- as.matrix(res[1:5,]) # extract p-values at each stage for control vs. active arm
+  tval <- as.matrix(res[6:10,]) # extract t-values at each stage for control vs. active arm
+  diff <- as.matrix(res[11:15,]) # extract observed effect size (trt - con) at each stage (one-sided goal with trt > con)
+  
+  
+  ### Strategy 1: Pocock Boundaries
+  
+  fut_stop <- (tval < fo_p1_crit_mat) # calculate if each arm has any test statistics below the futility boundary
+  
+  arm_stop1 <- sapply( 1:5, function(a) which(fut_stop[,a] == TRUE)[1] )
+  arm_stop1[ is.na(arm_stop1) ] <- 5 # make NA 5 since they never dropped for futility
+  
+  n_strat1 <- n_perstage[arm_stop1] # record sample size for each arm
+  ntot1 <- sum(n_strat1) # sum up for total sample size
+  
+  finish1 <- arm_stop1==5 # calculate indicator if arm made it to the end
+  
+  sig1 <- rep(FALSE, 5) # create indicator if significant comparison
+  sig1[ which(arm_stop1==5) ] <- unlist(pval[,5])[ which(arm_stop1==5) ] < 0.025 # estimate if arm is significant at alpha=0.025
+  
+  # save results
+  strat1_res[i,] <- c(ntot1, finish1, sig1)
+  
+  
+  ### Strategy 2: Drop smallest treatment effect arm as long as not significant
+  
+  diff2 <- diff # create copy of object to manipulate for decision rule
+  
+  arm_stop2 <- rep(5,5) # create object to save when arm stops, assume 5 for all to start
+  
+  for( k in 1:4 ){
+    armnum <- which( unlist(diff2[k,]) == min(unlist(diff2[k,])) ) # calc arm with min effect size
+    
+    if( pval[k,armnum] >= 0.1 ){
+      arm_stop2[armnum] <- k
+      diff2[,armnum] <- Inf # make all observed diffs large to ignore in next stage(s)
+    }
+  }
+
+  n_strat2 <- n_perstage[arm_stop2] # record sample size for each arm
+  ntot2 <- sum(n_strat2) # sum up for total sample size
+  
+  finish2 <- arm_stop2==5 # calculate indicator if arm made it to the end
+  
+  sig2 <- rep(FALSE, 5) # create indicator if significant comparison
+  sig2[ which(arm_stop2==5) ] <- unlist(pval[,5])[ which(arm_stop2==5) ] < 0.025 # estimate if arm is significant at alpha=0.025
+  
+  # save results
+  strat2_res[i,] <- c(ntot2, finish2, sig2)
+  
+
+    
+  ### Strategy 3: Drop smallest treatment effect arm regardless of significance
+  
+  diff3 <- diff # create copy of object to manipulate for decision rule
+  
+  arm_stop3 <- rep(5,5) # create object to save when arm stops, assume 5 for all to start
+  
+  for( k in 1:4 ){
+    armnum <- which( unlist(diff3[k,]) == min(unlist(diff3[k,])) ) # calc arm with min effect size
+    
+    arm_stop3[armnum] <- k
+    diff3[,armnum] <- Inf # make all observed diffs large to ignore in next stage(s)
+  }
+
+  n_strat3 <- n_perstage[arm_stop3] # record sample size for each arm
+  ntot3 <- sum(n_strat3) # sum up for total sample size
+  
+  finish3 <- arm_stop3==5 # calculate indicator if arm made it to the end
+  
+  sig3 <- sapply( 1:5, function(u) pval[ arm_stop3[u], u] < 0.025 ) # create indicator if significant comparison, here we will check each arm regardless of stopping point
+  
+  # save results
+  strat3_res[i,] <- c(ntot3, finish3, sig3)
+}
+
+# Format results to display
+strat1 <- colMeans(strat1_res)
+s1_sd <- sd( strat1_res[,1] )
+s1res <- c( paste0( round(strat1[1])," (",round(s1_sd),")"), paste0( strat1[2:11]*100, "%") )
+
+strat2 <- colMeans(strat2_res)
+s2_sd <- sd( strat2_res[,1] )
+s2res <- c( paste0( round(strat2[1])," (",round(s2_sd),")"), paste0( strat2[2:11]*100, "%") )
+
+strat3 <- colMeans(strat3_res)
+s3_sd <- sd( strat3_res[,1] )
+s3res <- c( paste0( round(strat3[1])," (",round(s3_sd),")"), paste0( strat3[2:11]*100, "%") )
+
+# Format results
+library(kableExtra)
+kbl_tab <- rbind('Pocock Futility' = s1res, 'Min(ES) and p>0.1' = s2res, 'Min(ES)' = s3res)
+
+kbl_tab %>%
+  kbl(col.names=c('Dropping Rule','ESS (SD)', 'ES=-0.5', 'ES=0', 'ES=0.1', 'ES=0.35','ES=0.4', 'ES=-0.5', 'ES=0', 'ES=0.1', 'ES=0.35','ES=0.4') ) %>%
+  kable_classic() %>%
+  add_header_above(c(" "=1, " "=1, "Arm Made to End of Trial"=5, "Arm Rejected Null Hypothesis"=5))
+```
+
+From this simulation we can see that each decision rule has different performance and properties:
+
+* Pocock stopping has the lowest power because of its aggressive stopping for futility, but does allow multiple arms to be dropped resulting in a lower ESS. It also has the lowest rates of harmful (ES=-0.5) or null (ES=0) arms making it to the end of the trial.
+* Dropping the smallest effect size in a stage, if $p>\alpha=0.1$, results in the highest proportions of the best two arms making it to the end of the trial, but it also leads to a slightly higher rate of ES=0.1 making it to the end which results in a larger ESS than we may desire.
+* Always dropping the minimum effect size, regardless of significance, but testing each arm based on the available data results in lower power and completion rates for ES=0.4, but does show slightly higher power for ES=0.35. Even though the trial completion rate for ES=0.35 is only 37.8%, this conundrum may be explained by the fact that we allowed for testing across all stages regardless of when it stopped and we may have, by chance, stopped ES=0.35 at the 4th stage when it was significant but if it continued enrollment to stage 5 its p-value increased over 0.025.
+
+In practice, the choice of dropping rules or strategies will be driven by the context of your particular study and balancing the strengthens and weaknesses across the trial operating characteristics.
+
+# References
+
+Below are some references to highlight based on the slides and code:
+
+* [FDA Adaptive Design Clinical Trials for Drugs and Biologics Guidance for Industry Guidance Document](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adaptive-design-clinical-trials-drugs-and-biologics-guidance-industry): FDA guidance document on adaptive trial elements
+
+* [Recent innovations in adaptive trial designs: A review of design opportunities in translational research](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/recent-innovations-in-adaptive-trial-designs-a-review-of-design-opportunities-in-translational-research/614EAFEA5E89CA035E82E152AF660E5D?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark): 2023 review paper examining adaptive and novel trial elements with included case studies

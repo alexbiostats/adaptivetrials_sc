@@ -1,0 +1,41 @@
+---
+title: "Introduction to Our Short Course"
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE
+)
+```
+
+
+# Overview
+
+This module serves as the start of our "Adaptive and Bayesian Methods for Clinical Trial Design" short course! We will do brief introductions and outline the general agenda for today's modules.
+
+
+# Slide Deck
+
+<iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/bf3947143ae24c0eb2e1454ad658dbd2" title="Intro Module" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+
+&nbsp;
+
+You can also download the [original PowerPoint file](./files/Slides/0_welcome_course.pptx).
+
+# References
+
+Below are some references to highlight that will serve as the framework for our short course:
+
+* [FDA Adaptive Design Clinical Trials for Drugs and Biologics Guidance for Industry Guidance Document](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adaptive-design-clinical-trials-drugs-and-biologics-guidance-industry): FDA guidance document on adaptive trial elements
+
+* [Recent innovations in adaptive trial designs: A review of design opportunities in translational research](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/recent-innovations-in-adaptive-trial-designs-a-review-of-design-opportunities-in-translational-research/614EAFEA5E89CA035E82E152AF660E5D?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark): 2023 review paper examining adaptive and novel trial elements with included case studies
+
+* [Guidance on interim analysis methods in clinical trials](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/guidance-on-interim-analysis-methods-in-clinical-trials/5051FDCF5284970B3DB01FE609AAA4C2?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark): 2023 review paper focusing on interim analyses in clinical trials with included case studies
+
+* [A practical guide to adopting Bayesian analyses in clinical research](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/practical-guide-to-adopting-bayesian-analyses-in-clinical-research/CF6C017318CD5431C98EEFE37DBB6063?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark): 2024 tutorial paper exploring the Bayesian approach to statistics and how to apply the methods for clinical trials

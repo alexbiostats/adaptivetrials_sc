@@ -1,0 +1,39 @@
+---
+title: "Clinical Trials 101"
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE
+)
+```
+
+
+# Overview
+
+This module serves as our starting point to provide a common understanding of what a clinical trial is and to review some common terminology we may encounter during our short course.
+
+
+# Slide Deck
+
+<iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/6dbd5b1593ca406fa6c6867c633210f1" title="Intro to Clinical Trials Module" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+
+&nbsp;
+
+You can also download the [original PowerPoint file](./files/Slides/1_intro_clinical_trials.pptx).
+
+
+# References
+
+Below are some references to highlight based on the slides and code:
+
+* [The PRECIS-2 tool: designing trials that are fit for purpose](https://doi.org/10.1136/bmj.h2147): the BMJ paper introducing the PRECIS-2 framework that helps to summarize how trials may be made pragmatic on different elements
+
+* [CONSORT 2010 statement](https://www.equator-network.org/reporting-guidelines/consort/): the CONSORT guidelines provide a template of what to report (and what we should be thinking of when designing a study)
+

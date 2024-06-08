@@ -1,0 +1,281 @@
+---
+title: "Bayesian 101"
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE
+)
+```
+
+
+# Overview
+
+This module covers a crash course in Bayesian statistics. While many adaptive trial elements can be done with frequentist methods, Bayesian methods provide additional flexibility. We will introduce the basics of the Bayesian approach to statistics and cover a brief example analysis of a clinical trial using Bayesian methods.
+
+# Slide Deck
+
+<iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/9e2562ed178d47419175ba3647883c01" title="Bayesian 101" allowfullscreen="true" data-ratio="1.7777777777777777">
+
+</iframe>
+
+ 
+
+You can also download the [original PowerPoint file](./files/Slides/2_intro_bayesian.pptx).
+
+# Code Examples in R
+
+## Software Options
+
+There are lots of statistical packages and approaches that we can use to either run Bayesian models in R, or to connect R with external software to implement the models. Some options include:
+
+-   [`brms` package](https://paul-buerkner.github.io/brms/): implements the Stan programming language within R, syntax is similar to the `lme4` package, this is our focus for Bayesian examples
+-   [`rstan` and `rstanarm` packages](https://mc-stan.org/users/interfaces/rstan): implements the Stan programming language within R, `rstanarm` uses standard `glm` syntax, runs more quickly than `brms` since models are pre-compiled
+-   [`bayestestr` package](https://easystats.github.io/bayestestR/): can provide Bayes factors and works with `rstanarm`, `brms`, and `BayesFactor`
+-   [`R2jags`](https://cran.r-project.org/web/packages/R2jags/index.html), [`rjags`](https://cran.r-project.org/web/packages/rjags/index.html), [`runjags`](https://cran.r-project.org/web/packages/runjags/index.html) packages: implements [JAGS (just another Gibbs sampler)](https://mcmc-jags.sourceforge.io/) which allows for non-gradient sampling, JAGS is one of the "original" approaches for implementing Bayesian analyses via software (that I remember), can be a little clunkier than other options
+
+It is worth noting that within each software distributions may use different parameterizations, so caution should be taken to ensure the desired prior values are used. For example, the normal distribution in JAGS uses the precision (i.e., $\tau = \frac{1}{\sigma^2}$), whereas Stan uses the standard deviation (i.e., $\sigma$).
+
+Dr. Kruschke has a nice introduction to Bayesian textbook that includes some [instructions for installing software for Bayesian analyses](https://sites.google.com/site/doingbayesiandataanalysis/software-installation). You may also be interested in exploring the textbook for more background on Bayesian theory, methods, and implementation.
+
+Additionally, Stata and SAS (e.g., PROC MCMC and PROC GENMOD) include Bayesian options. These are detailed in ["A practical guide to adopting Bayesian analyses in clinical research"](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/practical-guide-to-adopting-bayesian-analyses-in-clinical-research/CF6C017318CD5431C98EEFE37DBB6063?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark) for step-by-step guidance on their implementation.
+
+## Linear Regression Code from ["A practical guide to adopting Bayesian analyses in clinical research"](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/practical-guide-to-adopting-bayesian-analyses-in-clinical-research/CF6C017318CD5431C98EEFE37DBB6063?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark)
+
+This section provides the code from the published paper in R. The dataset for the paper is included in the corresponding [GitHub repository hosted by Dr. Nichole Carlson](https://github.com/nichole-carlson/BayesianClinicalResearch), but can also be downloaded as CSV here for convenience: [drugtrial.csv](./files/drugtrial.csv).
+
+For simplicity, we focus on comparing priors across simple linear regression models, but the [GitHub repository](https://github.com/nichole-carlson/BayesianClinicalResearch) includes examples for multiple linear regression and logistic regression models as well. In this example, we have a continuous outcome of time to readiness for discharge (in minutes) that are compared by two randomized treatment groups (sufentanil (new treatment) versus IV fentanyl).
+
+First, let's load our packages and read in our data:
+
+```{r, warning=F}
+# CALL LIBRARIES
+library(brms) #Bayesian modeling capabilities
+library(bayestestR) #particular Bayesian tests
+
+# READ IN CLINICAL TRIAL DATA FROM PAPER
+trial <- read.csv('files/drugtrial.csv')
+
+### CHECK OUT TOP ROWS OF DATA
+## trial mini-data dictionary:
+# rowid: trial ID
+# in_phase_1_to_out_of_phase_2: time to readiness for discharge after arrival in PACU (minutes)
+# sex_n: sex of participant (1=female, 0=male)
+# groupn: randomized group (1=sufentanil, 0=IV fentanyl)
+# blockn: preoperative nerve block used (1=yes, 0=no)
+# proc_length_center: procedure length (minutes)
+
+head(trial)
+```
+
+### Frequentist Simple Linear Regression
+
+For comparison sake, we can first fit our frequentist simple linear regression using the `glm` function:
+
+```{r}
+# Syntax: <name of model object> <- glm(<outcome variable> ~ <predictor variable>, data = <datasetname>, family=<distribution corresponding to model type>) 
+lin_reg <- glm(in_phase_1_to_out_of_phase_2 ~ groupn, 
+               data=trial, 
+               family='gaussian')
+
+# Syntax: summary(<model object>) - function to show model parameter estimates/results
+summary(lin_reg)
+
+# Syntax: confint() - print confidence intervals in console
+confint(lin_reg)
+```
+
+### brms Bayesian Simple Linear Regression Syntax
+
+The general syntax for using `brm` is described below:
+
+```{r}
+# Syntax: using brm function for Bayesian modeling
+#   <name of model object> <- brm(<outcome variable> ~ <predictor variable>, 
+#            data = <datasetname>, 
+#            family=<distribution corresponding to model type>,
+#            prior = c(set_prior("<distribution(mean,SD)", class = "<name>")),
+#            seed = <value - for reproducibility>,
+#            init = <name of initial values list>,
+#            warmup = <sets the # of burn-in iterations (those that will be 'thrown out')>,
+#            iter = <# of total iterations for each chain including burn-in>
+#            chains = <# of chains>,
+#            cores = <#> to use for executing chains in parallel - for processing)
+```
+
+We also will create a set of initial values to use for each our simple linear regressions below:
+
+```{r}
+# Set initial starting values for chains by creating a list, will be used for all simple linear regressions
+# Syntax: list(<model parameter> = <starting value>); be sure to list all parameters
+inits <- list(
+  Intercept = 0,
+  sigma     = 1,
+  beta      = 0 )
+
+# Syntax: <new_list> <- list(<initial values list name>) - Create list of all initial values
+list_of_inits <- list(inits, inits, inits)
+```
+
+### brms SLR with Pseudo Vague Prior
+
+In this example, we fit a "pseudo-vague" prior where $\sigma^2 = 1000$ or, equivalently, $\sigma = \sqrt{1000} = 31.62278$. Here we call the prior "pseudo-vague" because it turns out that while it seems like a *large* variance, since $\beta_0 \sim N(\mu=0, \sigma=31.62278)$, there is some biasing towards a mean of 0.
+
+```{r brms-slr-pseudo-vague-prior, cache=T}
+fit_lin_1 <-brm(in_phase_1_to_out_of_phase_2 ~ groupn,
+                data=trial,
+                family='gaussian',
+                prior = c(set_prior("normal(0,31.62278)", class = "b"),
+                          set_prior("normal(0,31.62278)", class ="Intercept"),
+                          set_prior("inv_gamma(0.01,0.01)", class="sigma")),
+                seed= 123,
+                init=list_of_inits,
+                warmup = 1000, iter = 10000, chains = 2, cores=4,
+                save_pars = save_pars(all = TRUE))
+
+# Summarize parameters
+summary(fit_lin_1)
+
+# Obtain highest density posterior interval
+bayestestR::hdi(fit_lin_1, ci=0.95) 
+
+# Syntax: plot() - print Bayesian diagnostic plots to console, plots in one figure
+plot(fit_lin_1)
+
+# Request plots individually 
+mcmc_plot(fit_lin_1, type="hist") #histogram
+mcmc_plot(fit_lin_1, type="trace") #trace plot
+mcmc_plot(fit_lin_1, type="acf") #autocorrelation plot
+
+# Syntax: prior_summary() - print priors used in console
+prior_summary(fit_lin_1)
+
+# Extract posterior chains
+post_samp <- as_draws(fit_lin_1)
+
+# Combine and extract drug group posterior estimates (can add more list items if more than 2 chains)
+xpost <- c(post_samp[[1]]$b_groupn, post_samp[[2]]$b_groupn) 
+
+# Calculate the posterior probability that our group predictor is less than 0
+mean(xpost < 0) 
+```
+
+### brms SLR with Vague Prior
+
+In this example, we fit a "vague" prior where $\sigma^2 = 10000$ or, equivalently, $\sigma = \sqrt{100} = 100$.
+
+```{r brms-slr-vague-prior, cache=T}
+fit_lin_2 <- brm(in_phase_1_to_out_of_phase_2 ~ groupn, 
+                 data=trial, 
+                 family='gaussian', 
+                 prior = c(set_prior("normal(0,100)", class = "b"),
+                           set_prior("normal(0,100)", class = "Intercept"),
+                           set_prior("inv_gamma(0.01,0.01)", class="sigma")),
+                 seed= 123,
+                 init=list_of_inits,
+                 warmup = 1000, iter = 10000, chains = 2, cores=4)
+
+summary(fit_lin_2)
+bayestestR::hdi(fit_lin_2, ci=0.95) 
+plot(fit_lin_2)
+mcmc_plot(fit_lin_2, type="hist") 
+mcmc_plot(fit_lin_2, type="trace") 
+mcmc_plot(fit_lin_2, type="acf") 
+prior_summary(fit_lin_2)
+
+
+# OPTION 1 for calculating posterior probabilities:
+# Extract posterior chains
+post_samp2 <- as_draws(fit_lin_2)
+xpost2 <- c(post_samp2[[1]]$b_groupn, post_samp2[[2]]$b_groupn) 
+
+# Calculate the posterior probability that our group predictor is less than 0
+mean(xpost2 < 0) 
+
+
+
+# OPTION 2 for calculating posterior probabilities:
+# Extract posterior chains
+post_samp2 <- as_draws_df(fit_lin_2)
+
+# Create an indicator for group < 0
+post_samp2$indicator <- post_samp2$b_groupn<0
+
+# Calculate the posterior probability
+summary(post_samp2$indicator)
+```
+
+### brms SLR with Optimistic Prior
+
+In this example, we fit an "optimistic" prior on our treatment group such that $\beta_1 \sim N(\mu=-30, \sigma=10)$. This was selected based on the estimates used for the power analysis in the original trial where it was estimated that a clinically meaningful difference would be a 30 minute reduction in readiness to discharge.
+
+```{r brms-slr-optimistic-prior, cache=T}
+fit_lin_3 <- brm(in_phase_1_to_out_of_phase_2 ~ groupn, 
+                 data=trial, 
+                 family='gaussian', 
+                 prior = c(set_prior("normal(-30,10)", class = "b", coef = "groupn"),
+                           set_prior("normal(0,100)", class = "Intercept"),
+                           set_prior("inv_gamma(0.01,0.01)", class="sigma")),
+                 seed= 123,
+                 init=list_of_inits,
+                 warmup = 1000, iter = 10000, chains = 2, cores=4)
+summary(fit_lin_3)
+bayestestR::hdi(fit_lin_3, ci=0.95) #get 95% HDP Credible Intervals
+plot(fit_lin_3)
+mcmc_plot(fit_lin_3, type="hist") 
+mcmc_plot(fit_lin_3, type="trace") 
+mcmc_plot(fit_lin_3, type="acf") 
+prior_summary(fit_lin_3)
+
+# Extract posterior chains
+post_samp3 <- as_draws(fit_lin_3)
+
+xpost3 <- c(post_samp3[[1]]$b_groupn, post_samp3[[2]]$b_groupn) 
+
+# Calculate the posterior probability that our group predictor is less than 0
+mean(xpost3 < 0) 
+```
+
+### brms SLR with Skeptical Prior
+
+In this example, we fit a "skeptical" prior on our treatment group such that $\beta_1 \sim N(\mu=0, \sigma=10)$. This prior represents a skeptics belief that there is a meaningful treatment difference by centering the treatment effect at 0 with smaller variance than our vague prior.
+
+```{r brms-slr-skeptical-prior, cache=T}
+fit_lin_4 <- brm(in_phase_1_to_out_of_phase_2 ~ groupn, 
+                 data=trial, 
+                 family='gaussian', 
+                 prior = c(set_prior("normal(0,10)", class = "b", coef = "groupn"),
+                           set_prior("normal(0,100)", class = "Intercept"),
+                           set_prior("inv_gamma(0.01,0.01)", class="sigma")),
+                 seed= 123,
+                 init=list_of_inits,
+                 warmup = 1000, iter = 10000, chains = 2, cores=4)
+
+summary(fit_lin_4)
+bayestestR::hdi(fit_lin_4, ci=0.95) #get 95% HDP Credible Intervals
+plot(fit_lin_4)
+mcmc_plot(fit_lin_4, type="hist") 
+mcmc_plot(fit_lin_4, type="trace") 
+mcmc_plot(fit_lin_4, type="acf") 
+prior_summary(fit_lin_4)
+
+# Extract posterior chains
+post_samp4 <- as_draws(fit_lin_4)
+
+xpost4 <- c(post_samp4[[1]]$b_groupn, post_samp4[[2]]$b_groupn) 
+
+# Calculate the posterior probability that our group predictor is less than 0
+mean(xpost4 < 0) 
+```
+
+# References
+
+Below are some references to highlight based on the slides and code:
+
+-   [A practical guide to adopting Bayesian analyses in clinical research](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/practical-guide-to-adopting-bayesian-analyses-in-clinical-research/CF6C017318CD5431C98EEFE37DBB6063?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark): 2024 tutorial paper exploring the Bayesian approach to statistics and how to apply the methods for clinical trials
