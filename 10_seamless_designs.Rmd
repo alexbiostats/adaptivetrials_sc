@@ -5,6 +5,10 @@ output:
     toc: true
     toc_float: true
     code_folding: show
+    includes:
+      in_header:
+        - header.html
+        - header-tracker.html
 ---
 
 ```{r, echo = FALSE}
