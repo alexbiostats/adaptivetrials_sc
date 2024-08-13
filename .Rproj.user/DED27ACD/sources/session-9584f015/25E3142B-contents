@@ -1,0 +1,48 @@
+---
+title: "Master Protocol Designs"
+toc: true
+toc_float: true
+toc-location: left
+format:
+  html:
+    code-fold: show
+    code-overflow: wrap 
+    code-tools: true
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE
+)
+```
+
+
+# Overview
+
+Traditionally we have designed separate, standalone trials to evaluate an intervention, even if there may be commonalities to ongoing and related studies. Master protocols serve as a flexible solution to this sometimes redundant approach to trials. In this module we discuss *basket trials* that allow multiple indications for a common intervention, *umbrella trials* that attempt to target eligible disease states for personalized therapy, and *platform trials* that allow for the evaluation of multiple therapies and populations.
+
+
+# Slide Deck
+
+<iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/ec0cf897d4fb466ba529c7cf8d329431" title="Master Protocol Designs" allowfullscreen="true" data-ratio="1.7777777777777777"></iframe>
+
+&nbsp;
+
+You can also download the [original PowerPoint file](./files/Slides/9_master_protocols.pptx).
+
+
+# Code Examples in R
+
+While master protocols themselves can be analyzed with general software, some special packages that incorporate other elements include:
+
+* [`basket`](https://cran.rstudio.com/web/packages/basket/index.html): implements asymmetric multi-source exchangeability models (MEMs) for basket trial designs where we wish to evaluate if pooling subgroups is possible based on exchangeability, restricted to binary outcomes
+* [`NCC`](https://cran.r-project.org/web/packages/NCC/): provides functions to implement and evaluate platform trials with non-concurrent controls
+* [`PlatformDesign`](https://cran.r-project.org/web/packages/PlatformDesign/index.html): design parameters for two-period multiarm platform designs
+
+
+# References
+
+Below are some references to highlight based on the slides and code:
+
+* [Recent innovations in adaptive trial designs: A review of design opportunities in translational research](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/recent-innovations-in-adaptive-trial-designs-a-review-of-design-opportunities-in-translational-research/614EAFEA5E89CA035E82E152AF660E5D?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark): 2023 review paper examining adaptive and novel trial elements with included case studies

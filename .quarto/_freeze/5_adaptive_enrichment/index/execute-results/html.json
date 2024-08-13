@@ -1,0 +1,14 @@
+{
+  "hash": "275b6bc53149fea17e87c43493582ee5",
+  "result": {
+    "markdown": "---\ntitle: \"Adaptive Enrichment\"\ntoc: true\ntoc_float: true\ntoc-location: left\nformat:\n  html:\n    code-fold: show\n    code-overflow: wrap \n    code-tools: true\n---\n\n::: {.cell}\n\n:::\n\n\n\n# Overview\n\nWhile we may hope that an intervention is universally beneficial, it is possible that treatment response varies by subgroup. In this module we review design elements that allow us to refine the eligibility of a study during interim analyses to \"enrich\" the study sample for subgroups that may be more likely to benefit or demonstrate an effect for our chosen outcome.\n\n\n# Slide Deck\n\n<iframe class=\"speakerdeck-iframe\" style=\"border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;\" frameborder=\"0\" src=\"https://speakerdeck.com/player/05192db116a04b7e9e9d9c757a17066a\" title=\"Adaptive Enrichment Designs\" allowfullscreen=\"true\" data-ratio=\"1.7777777777777777\"></iframe>\n\n&nbsp;\n\nYou can also download the [original PowerPoint file](../files/Slides/5_adaptive_enrichment.pptx).\n\n\n# Code Examples in R\n\nA few R packages that are noted to handle adaptive enrichment designs include:\n\n* [`rpact`](https://www.rpact.org/): a package for confirmatory adaptive clinical trial design, simulation, and analysis; includes some [vignettes](https://www.rpact.org/vignettes/planning/rpact_enrichment_designs_simulation_rates/) for conducting enrichment studies with the software\n* [`esDesign`](https://cran.r-project.org/web/packages/esDesign/index.html): implement adaptive enrichment designs, potentially with sample size re-estimation, as proposed by [Lin et al. (2021)](https://doi.org/10.1016%2Fj.cct.2020.106216)\n\n\n# References\n\nBelow are some references to highlight based on the slides and code:\n\n* [FDA Adaptive Design Clinical Trials for Drugs and Biologics Guidance for Industry Guidance Document](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adaptive-design-clinical-trials-drugs-and-biologics-guidance-industry): FDA guidance document on adaptive trial elements\n\n* [Recent innovations in adaptive trial designs: A review of design opportunities in translational research](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/recent-innovations-in-adaptive-trial-designs-a-review-of-design-opportunities-in-translational-research/614EAFEA5E89CA035E82E152AF660E5D?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark): 2023 review paper examining adaptive and novel trial elements with included case studies\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "hash": "e8d937b1bd6960686953249bb2bb1698",
+  "result": {
+    "markdown": "---\ntitle: \"Clinical Trials 101\"\ntoc: true\ntoc_float: true\ntoc-location: left\nformat:\n  html:\n    code-fold: show\n    code-overflow: wrap \n---\n\n::: {.cell}\n\n:::\n\n\n\n# Overview\n\nThis module serves as our starting point to provide a common understanding of what a clinical trial is and to review some common terminology we may encounter during our short course.\n\n\n# Slide Deck\n\n<iframe class=\"speakerdeck-iframe\" style=\"border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;\" frameborder=\"0\" src=\"https://speakerdeck.com/player/6dbd5b1593ca406fa6c6867c633210f1\" title=\"Intro to Clinical Trials Module\" allowfullscreen=\"true\" data-ratio=\"1.7777777777777777\"></iframe>\n\n&nbsp;\n\nYou can also download the [original PowerPoint file](../files/Slides/1_intro_clinical_trials.pptx).\n\n\n# References\n\nBelow are some references to highlight based on the slides and code:\n\n* [The PRECIS-2 tool: designing trials that are fit for purpose](https://doi.org/10.1136/bmj.h2147): the BMJ paper introducing the PRECIS-2 framework that helps to summarize how trials may be made pragmatic on different elements\n\n* [CONSORT 2010 statement](https://www.equator-network.org/reporting-guidelines/consort/): the CONSORT guidelines provide a template of what to report (and what we should be thinking of when designing a study)\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

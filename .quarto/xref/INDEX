@@ -1,0 +1,83 @@
+{
+  "0_intro.qmd": {
+    "0_intro.html": "815fab19"
+  },
+  "10_seamless_designs.qmd": {
+    "10_seamless_designs.html": "efe47d63"
+  },
+  "1_intro_clinical_trials.qmd": {
+    "1_intro_clinical_trials.html": "d7c2904e"
+  },
+  "2_intro_bayesian.qmd": {
+    "2_intro_bayesian.html": "76ed258f"
+  },
+  "3_interim_monitoring.qmd": {
+    "3_interim_monitoring.html": "edc93d77"
+  },
+  "404.qmd": {
+    "404.html": "a79d1a1d"
+  },
+  "4_sample_size_reestimation.qmd": {
+    "4_sample_size_reestimation.html": "f7aa1f66"
+  },
+  "5_adaptive_enrichment.qmd": {
+    "5_adaptive_enrichment.html": "121d3111"
+  },
+  "6_treatment_arm_selection.qmd": {
+    "6_treatment_arm_selection.html": "7f5fcad7"
+  },
+  "7_adaptive_randomization.qmd": {
+    "7_adaptive_randomization.html": "19e08d41"
+  },
+  "8_bayesian_information_sharing.qmd": {
+    "8_bayesian_information_sharing.html": "3b9868a0"
+  },
+  "9_master_protocols.qmd": {
+    "9_master_protocols.html": "05f99cea"
+  },
+  "about.Rmd": {
+    "about.html": "f67309bf"
+  },
+  "index.qmd": {
+    "index.html": "be4572fe"
+  },
+  "about.qmd": {
+    "about.html": "4e3c3183"
+  },
+  "0_intro/index.qmd": {
+    "index.html": "96a9cc00"
+  },
+  "10_seamless_designs/index.qmd": {
+    "index.html": "7d822778"
+  },
+  "1_intro_clinical_trials/index.qmd": {
+    "index.html": "cf720c43"
+  },
+  "2_intro_bayesian/index.qmd": {
+    "index.html": "5e10054b"
+  },
+  "3_interim_monitoring/index.qmd": {
+    "index.html": "68785838"
+  },
+  "4_sample_size_reestimation/index.qmd": {
+    "index.html": "ebb22d39"
+  },
+  "5_adaptive_enrichment/index.qmd": {
+    "index.html": "21d21461"
+  },
+  "6_treatment_arm_selection/index.qmd": {
+    "index.html": "ef5685bf"
+  },
+  "7_adaptive_randomization/index.qmd": {
+    "index.html": "de511954"
+  },
+  "8_bayesian_information_sharing/index.qmd": {
+    "index.html": "df070dff"
+  },
+  "9_master_protocols/index.qmd": {
+    "index.html": "21defdd5"
+  },
+  "about/index.qmd": {
+    "index.html": "78e62c96"
+  }
+}

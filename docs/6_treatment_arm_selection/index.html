@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Alex Kaizer - Adaptive Treatment Arm Selection</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/academicons-1.9.2/all.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/academicons-1.9.2/size.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link href="site_libs/academicons-1.9.1/css/academicons.css" rel="stylesheet">
+
+<link rel="icon" type="image/png" href="./files/favicon.ico">
+
+<script type="text/javascript">
+function setBrand() {
+document.getElementsByClassName("navbar-brand")[0].href="https://www.alexkaizer.com";
+}
+window.onload = setBrand;
+</script>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-5PBG7BL207"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5PBG7BL207');
+</script>
+
+<script src="../site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Alex Kaizer</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-short-course" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Short Course</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-short-course">    
+        <li>
+    <a class="dropdown-item" href="../0_intro" rel="" target="">
+ <span class="dropdown-text">Intro and Welcome</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../1_intro_clinical_trials" rel="" target="">
+ <span class="dropdown-text">Basics of Clinical Trials</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../2_intro_bayesian" rel="" target="">
+ <span class="dropdown-text">Bayesian 101</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../3_interim_monitoring" rel="" target="">
+ <span class="dropdown-text">Interim Monitoring</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../4_sample_size_reestimation" rel="" target="">
+ <span class="dropdown-text">Sample Size Re-Estimation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../5_adaptive_enrichment" rel="" target="">
+ <span class="dropdown-text">Adaptive Enrichment</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../6_treatment_arm_selection" rel="" target="">
+ <span class="dropdown-text">Treatment Arm Selection</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../7_adaptive_randomization" rel="" target="">
+ <span class="dropdown-text">Adaptive Randomization</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../8_bayesian_information_sharing" rel="" target="">
+ <span class="dropdown-text">Bayesian Information Sharing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../9_master_protocols" rel="" target="">
+ <span class="dropdown-text">Master Protocols</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../10_seamless_designs" rel="" target="">
+ <span class="dropdown-text">Seamless Designs</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:alex.kaizer@cuanschutz.edu" rel="" target=""><i class="bi bi-envelope" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://scholar.google.com/citations?user=ICpH74EAAAAJ&amp;hl=en" rel="" target="">
+ <span class="menu-text"><i class="ai  ai-google-scholar ai-large"></i></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="http://github.com/alexbiostats" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://www.alexkaizer.com/files/Alex_CV.pdf" rel="" target="">
+ <span class="menu-text"><i class="ai  ai-cv ai-large"></i></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/alex-kaizer/" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#slide-deck" id="toc-slide-deck" class="nav-link" data-scroll-target="#slide-deck">Slide Deck</a></li>
+  <li><a href="#code-examples-in-r" id="toc-code-examples-in-r" class="nav-link" data-scroll-target="#code-examples-in-r">Code Examples in R</a></li>
+  <li><a href="#simulation-study" id="toc-simulation-study" class="nav-link" data-scroll-target="#simulation-study">Simulation Study</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Adaptive Treatment Arm Selection</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>There may be uncertainty as to which study arms to include in a prospective trial, especially if we have multiple doses to consider, multiple candidate therapies, or potentially limited resources to explore all options. In this module we introduce the adaptive concept of treatment arm dropping and adding.</p>
+</section>
+<section id="slide-deck" class="level1">
+<h1>Slide Deck</h1>
+<iframe class="speakerdeck-iframe" style="border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" frameborder="0" src="https://speakerdeck.com/player/bebd3fb80cba4dc7a3e5fb6c16608507" title="Adaptive Treatment Arm Selection" allowfullscreen="true" data-ratio="1.7777777777777777">
+</iframe>
+<p>&nbsp;</p>
+<p>You can also download the <a href="../files/Slides/6_treatment_arm_selection.pptx">original PowerPoint file</a>.</p>
+</section>
+<section id="code-examples-in-r" class="level1">
+<h1>Code Examples in R</h1>
+<p>Within R there are plenty of packages to implement dose-finding algorithms, which can be thought of as a form of arm dropping:</p>
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/CRM/index.html"><code>CRM</code></a>: implements the continual reassessment method for phase I clinical trials</li>
+<li><a href="https://cran.r-project.org/web/packages/bcrm/index.html"><code>bcrm</code></a>: implements a Bayesian version of the CRM</li>
+<li><a href="https://cran.r-project.org/web/packages/DoseFinding/index.html"><code>DoseFinding</code></a>: provides functions for designing and analyzing dose-finding experiments with a focus on phase II studies</li>
+</ul>
+<p>For general treatment arm selection, many approaches are custom coded by the user depending on the rules used.</p>
+</section>
+<section id="simulation-study" class="level1">
+<h1>Simulation Study</h1>
+<p>For a brief simulation study, let’s compare the operating characteristics for a set of different arm dropping rules:</p>
+<ul>
+<li>Keep all active arms that are not dropped for futility based on one-sided Pocock stopping boundaries</li>
+<li>Drop the arm with the smallest treatment effect at each stage as long as it is not statistically significant at a more generous <span class="math inline">\(\alpha=0.1\)</span> threshold</li>
+<li>Drop the arm with the smallest treatment effect regardless of statistical significance so the study ends with two arms</li>
+</ul>
+<p>In our simulation we make the following assumptions:</p>
+<ul>
+<li>There are six total arms (1 shared control, 5 treatment arms )</li>
+<li>Each arm will enroll 100 if it never stops (i.e., power calculation for two-sample t-test assuming <span class="math inline">\(\alpha=0.05\)</span>, <span class="math inline">\(\beta=0.8\)</span>, <span class="math inline">\(\delta=0.4\)</span>, <span class="math inline">\(\sigma=1\)</span>)</li>
+<li>We will plan for 5 total stages (i.e., 20 per stage) so that the final analysis can end with a control versus winner(s) comparison</li>
+<li>We assume normally distributed outcomes with <span class="math inline">\(\sigma=1\)</span> for all arms</li>
+<li>The control group mean response is 0, our 5 treatment arm responses are -0.05, 0, 0.1, 0.35, 0.4 (i.e., worse than control, same as control, three improved relative to control by differing degrees)</li>
+<li>We will not make any corrections for multiple testing</li>
+</ul>
+<p>Now let’s explore our results for the arms that remain at the end of each study, overall sample size, and the rejection rates:</p>
+<div class="cell" data-hash="index_cache/html/arm-selection-sim_512d540e4f39bdbfaf7ba96a18daeb84">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpact) <span class="co"># load rpact for futility bounds</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>fo_p1 <span class="ot">&lt;-</span> <span class="fu">getDesignGroupSequential</span>(<span class="at">typeOfDesign =</span> <span class="st">"asUser"</span>, <span class="at">alpha=</span><span class="fl">0.025</span>, <span class="at">userAlphaSpending =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.025</span>), </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">typeBetaSpending =</span> <span class="st">"bsP"</span>, <span class="co"># Pocock futility boundaries</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">bindingFutility =</span> <span class="cn">FALSE</span>, <span class="at">kMax =</span> <span class="dv">5</span>, <span class="at">sided=</span><span class="dv">1</span>, <span class="at">beta=</span><span class="fl">0.2</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>fo_p1_crit <span class="ot">&lt;-</span> fo_p1<span class="sc">$</span>futilityBounds <span class="co">#  extract futility boundaries</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>fo_p1_crit_mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">c</span>(fo_p1_crit, <span class="sc">-</span><span class="cn">Inf</span>), <span class="at">ncol=</span><span class="dv">5</span>, <span class="at">nrow=</span><span class="dv">5</span>) <span class="co"># create matrix to compare with test statistics in simulation, add -Inf for final comparison at end of trial</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># set means (m) per study arm</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.05</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>m4 <span class="ot">&lt;-</span> <span class="fl">0.35</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>m5 <span class="ot">&lt;-</span> <span class="fl">0.4</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># set other parameters</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>sc <span class="ot">&lt;-</span> s1 <span class="ot">&lt;-</span> s2 <span class="ot">&lt;-</span> s3 <span class="ot">&lt;-</span> s4 <span class="ot">&lt;-</span> s5 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># common variance, could change for other scenarios</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>seed <span class="ot">&lt;-</span> <span class="dv">515</span> <span class="co"># seed for reproducibility</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>nmax <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># max per arm</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>nstage <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># total number of stages</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>n_perstage <span class="ot">&lt;-</span> <span class="fu">ceiling</span>( <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">100</span>,<span class="at">length.out=</span><span class="dv">6</span>)[<span class="sc">-</span><span class="dv">1</span>] ) <span class="co"># number enrolled in each stage (so you can change nmax, nstage, etc. and code still works)</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>nsim <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="co"># number of simulations</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>strat1_res <span class="ot">&lt;-</span> strat2_res <span class="ot">&lt;-</span> strat3_res <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span>nsim, <span class="at">ncol=</span><span class="dv">11</span>) <span class="co"># create objects to save simulation results</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># simulation</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(seed) <span class="co"># set seed for reproducibility</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>( i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nsim ){</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># use sapply to create matrix of data with each data set represented by a column</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  simdat <span class="ot">&lt;-</span> <span class="fu">sapply</span>( <span class="fu">c</span>(<span class="st">'c'</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>), <span class="cf">function</span>(x) <span class="fu">rnorm</span>(<span class="at">mean =</span> <span class="fu">get</span>(<span class="fu">paste0</span>(<span class="st">'m'</span>,x)), <span class="at">sd =</span> <span class="fu">get</span>(<span class="fu">paste0</span>(<span class="st">'s'</span>,x)), <span class="at">n=</span>nmax) ) </span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate two-sample t-tests for what the observed test statistic and p-value would be at each stage</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># write helper function, paircompare(), to extract this information</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  paircompare <span class="ot">&lt;-</span> <span class="cf">function</span>(arm_control, arm_trt, n_perstage){</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="do">### Helper function to calculate test statistic and p-value for two groups given data and sample sizes to use</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># arm_control/arm_trt: vector with observed data up to max sample size</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># n_perstage: sample size after each stage</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    tres <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(n_perstage, <span class="cf">function</span>(z) <span class="fu">t.test</span>(arm_trt[<span class="dv">1</span><span class="sc">:</span>z], arm_control[<span class="dv">1</span><span class="sc">:</span>z], <span class="at">alternative =</span> <span class="st">'greater'</span>)[<span class="fu">c</span>(<span class="st">'p.value'</span>,<span class="st">'statistic'</span>)] ))</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    eres <span class="ot">&lt;-</span> <span class="fu">sapply</span>(n_perstage, <span class="cf">function</span>(z) <span class="fu">mean</span>(arm_trt[<span class="dv">1</span><span class="sc">:</span>z]) <span class="sc">-</span> <span class="fu">mean</span>(arm_control[<span class="dv">1</span><span class="sc">:</span>z] ) )</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>( <span class="fu">cbind</span>(tres, eres) )</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">sapply</span>( <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, <span class="cf">function</span>(w) <span class="fu">paircompare</span>(<span class="at">arm_control =</span> simdat[,<span class="dv">1</span>], <span class="at">arm_trt =</span> simdat[,w], <span class="at">n_perstage =</span> n_perstage)  )</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  pval <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(res[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,]) <span class="co"># extract p-values at each stage for control vs. active arm</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  tval <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(res[<span class="dv">6</span><span class="sc">:</span><span class="dv">10</span>,]) <span class="co"># extract t-values at each stage for control vs. active arm</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>  diff <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(res[<span class="dv">11</span><span class="sc">:</span><span class="dv">15</span>,]) <span class="co"># extract observed effect size (trt - con) at each stage (one-sided goal with trt &gt; con)</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>  <span class="do">### Strategy 1: Pocock Boundaries</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>  fut_stop <span class="ot">&lt;-</span> (tval <span class="sc">&lt;</span> fo_p1_crit_mat) <span class="co"># calculate if each arm has any test statistics below the futility boundary</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>  arm_stop1 <span class="ot">&lt;-</span> <span class="fu">sapply</span>( <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="cf">function</span>(a) <span class="fu">which</span>(fut_stop[,a] <span class="sc">==</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>] )</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  arm_stop1[ <span class="fu">is.na</span>(arm_stop1) ] <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># make NA 5 since they never dropped for futility</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  n_strat1 <span class="ot">&lt;-</span> n_perstage[arm_stop1] <span class="co"># record sample size for each arm</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  ntot1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(n_strat1) <span class="co"># sum up for total sample size</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>  finish1 <span class="ot">&lt;-</span> arm_stop1<span class="sc">==</span><span class="dv">5</span> <span class="co"># calculate indicator if arm made it to the end</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>  sig1 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="dv">5</span>) <span class="co"># create indicator if significant comparison</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>  sig1[ <span class="fu">which</span>(arm_stop1<span class="sc">==</span><span class="dv">5</span>) ] <span class="ot">&lt;-</span> <span class="fu">unlist</span>(pval[,<span class="dv">5</span>])[ <span class="fu">which</span>(arm_stop1<span class="sc">==</span><span class="dv">5</span>) ] <span class="sc">&lt;</span> <span class="fl">0.025</span> <span class="co"># estimate if arm is significant at alpha=0.025</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>  <span class="co"># save results</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>  strat1_res[i,] <span class="ot">&lt;-</span> <span class="fu">c</span>(ntot1, finish1, sig1)</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>  <span class="do">### Strategy 2: Drop smallest treatment effect arm as long as not significant</span></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>  diff2 <span class="ot">&lt;-</span> diff <span class="co"># create copy of object to manipulate for decision rule</span></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>  arm_stop2 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">5</span>,<span class="dv">5</span>) <span class="co"># create object to save when arm stops, assume 5 for all to start</span></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>( k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span> ){</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>    armnum <span class="ot">&lt;-</span> <span class="fu">which</span>( <span class="fu">unlist</span>(diff2[k,]) <span class="sc">==</span> <span class="fu">min</span>(<span class="fu">unlist</span>(diff2[k,])) ) <span class="co"># calc arm with min effect size</span></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>( pval[k,armnum] <span class="sc">&gt;=</span> <span class="fl">0.1</span> ){</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>      arm_stop2[armnum] <span class="ot">&lt;-</span> k</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>      diff2[,armnum] <span class="ot">&lt;-</span> <span class="cn">Inf</span> <span class="co"># make all observed diffs large to ignore in next stage(s)</span></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>  n_strat2 <span class="ot">&lt;-</span> n_perstage[arm_stop2] <span class="co"># record sample size for each arm</span></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>  ntot2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(n_strat2) <span class="co"># sum up for total sample size</span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>  finish2 <span class="ot">&lt;-</span> arm_stop2<span class="sc">==</span><span class="dv">5</span> <span class="co"># calculate indicator if arm made it to the end</span></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>  sig2 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="dv">5</span>) <span class="co"># create indicator if significant comparison</span></span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>  sig2[ <span class="fu">which</span>(arm_stop2<span class="sc">==</span><span class="dv">5</span>) ] <span class="ot">&lt;-</span> <span class="fu">unlist</span>(pval[,<span class="dv">5</span>])[ <span class="fu">which</span>(arm_stop2<span class="sc">==</span><span class="dv">5</span>) ] <span class="sc">&lt;</span> <span class="fl">0.025</span> <span class="co"># estimate if arm is significant at alpha=0.025</span></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>  <span class="co"># save results</span></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>  strat2_res[i,] <span class="ot">&lt;-</span> <span class="fu">c</span>(ntot2, finish2, sig2)</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>  <span class="do">### Strategy 3: Drop smallest treatment effect arm regardless of significance</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>  diff3 <span class="ot">&lt;-</span> diff <span class="co"># create copy of object to manipulate for decision rule</span></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>  arm_stop3 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">5</span>,<span class="dv">5</span>) <span class="co"># create object to save when arm stops, assume 5 for all to start</span></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>( k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span> ){</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>    armnum <span class="ot">&lt;-</span> <span class="fu">which</span>( <span class="fu">unlist</span>(diff3[k,]) <span class="sc">==</span> <span class="fu">min</span>(<span class="fu">unlist</span>(diff3[k,])) ) <span class="co"># calc arm with min effect size</span></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>    arm_stop3[armnum] <span class="ot">&lt;-</span> k</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>    diff3[,armnum] <span class="ot">&lt;-</span> <span class="cn">Inf</span> <span class="co"># make all observed diffs large to ignore in next stage(s)</span></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>  n_strat3 <span class="ot">&lt;-</span> n_perstage[arm_stop3] <span class="co"># record sample size for each arm</span></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>  ntot3 <span class="ot">&lt;-</span> <span class="fu">sum</span>(n_strat3) <span class="co"># sum up for total sample size</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>  finish3 <span class="ot">&lt;-</span> arm_stop3<span class="sc">==</span><span class="dv">5</span> <span class="co"># calculate indicator if arm made it to the end</span></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>  sig3 <span class="ot">&lt;-</span> <span class="fu">sapply</span>( <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="cf">function</span>(u) pval[ arm_stop3[u], u] <span class="sc">&lt;</span> <span class="fl">0.025</span> ) <span class="co"># create indicator if significant comparison, here we will check each arm regardless of stopping point</span></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>  <span class="co"># save results</span></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>  strat3_res[i,] <span class="ot">&lt;-</span> <span class="fu">c</span>(ntot3, finish3, sig3)</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a><span class="co"># Format results to display</span></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>strat1 <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(strat1_res)</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>s1_sd <span class="ot">&lt;-</span> <span class="fu">sd</span>( strat1_res[,<span class="dv">1</span>] )</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>s1res <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="fu">paste0</span>( <span class="fu">round</span>(strat1[<span class="dv">1</span>]),<span class="st">" ("</span>,<span class="fu">round</span>(s1_sd),<span class="st">")"</span>), <span class="fu">paste0</span>( strat1[<span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>]<span class="sc">*</span><span class="dv">100</span>, <span class="st">"%"</span>) )</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>strat2 <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(strat2_res)</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>s2_sd <span class="ot">&lt;-</span> <span class="fu">sd</span>( strat2_res[,<span class="dv">1</span>] )</span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>s2res <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="fu">paste0</span>( <span class="fu">round</span>(strat2[<span class="dv">1</span>]),<span class="st">" ("</span>,<span class="fu">round</span>(s2_sd),<span class="st">")"</span>), <span class="fu">paste0</span>( strat2[<span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>]<span class="sc">*</span><span class="dv">100</span>, <span class="st">"%"</span>) )</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>strat3 <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(strat3_res)</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>s3_sd <span class="ot">&lt;-</span> <span class="fu">sd</span>( strat3_res[,<span class="dv">1</span>] )</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>s3res <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="fu">paste0</span>( <span class="fu">round</span>(strat3[<span class="dv">1</span>]),<span class="st">" ("</span>,<span class="fu">round</span>(s3_sd),<span class="st">")"</span>), <span class="fu">paste0</span>( strat3[<span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>]<span class="sc">*</span><span class="dv">100</span>, <span class="st">"%"</span>) )</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="co"># Format results</span></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>kbl_tab <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="st">'Pocock Futility'</span> <span class="ot">=</span> s1res, <span class="st">'Min(ES) and p&gt;0.1'</span> <span class="ot">=</span> s2res, <span class="st">'Min(ES)'</span> <span class="ot">=</span> s3res)</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>kbl_tab <span class="sc">%&gt;%</span></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">'Dropping Rule'</span>,<span class="st">'ESS (SD)'</span>, <span class="st">'ES=-0.5'</span>, <span class="st">'ES=0'</span>, <span class="st">'ES=0.1'</span>, <span class="st">'ES=0.35'</span>,<span class="st">'ES=0.4'</span>, <span class="st">'ES=-0.5'</span>, <span class="st">'ES=0'</span>, <span class="st">'ES=0.1'</span>, <span class="st">'ES=0.35'</span>,<span class="st">'ES=0.4'</span>) ) <span class="sc">%&gt;%</span></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_header_above</span>(<span class="fu">c</span>(<span class="st">" "</span><span class="ot">=</span><span class="dv">1</span>, <span class="st">" "</span><span class="ot">=</span><span class="dv">1</span>, <span class="st">"Arm Made to End of Trial"</span><span class="ot">=</span><span class="dv">5</span>, <span class="st">"Arm Rejected Null Hypothesis"</span><span class="ot">=</span><span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="lightable-classic table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; empty-cells: hide;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: left; empty-cells: hide;"></th>
+<th colspan="5" data-quarto-table-cell-role="th" style="text-align: center; padding-bottom: 0; padding-left: 3px; padding-right: 3px;"><div style="border-bottom: 1px solid #111111; margin-bottom: -1px; ">
+Arm Made to End of Trial
+</div></th>
+<th colspan="5" data-quarto-table-cell-role="th" style="text-align: center; padding-bottom: 0; padding-left: 3px; padding-right: 3px;"><div style="border-bottom: 1px solid #111111; margin-bottom: -1px; ">
+Arm Rejected Null Hypothesis
+</div></th>
+</tr>
+<tr class="odd">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Dropping Rule</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ESS (SD)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ES=-0.5</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ES=0</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ES=0.1</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ES=0.35</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ES=0.4</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ES=-0.5</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ES=0</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ES=0.1</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ES=0.35</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ES=0.4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Pocock Futility</td>
+<td style="text-align: left;">292 (83)</td>
+<td style="text-align: left;">2.8%</td>
+<td style="text-align: left;">4.8%</td>
+<td style="text-align: left;">15.1%</td>
+<td style="text-align: left;">64.8%</td>
+<td style="text-align: left;">73.4%</td>
+<td style="text-align: left;">1.3%</td>
+<td style="text-align: left;">3.9%</td>
+<td style="text-align: left;">13.2%</td>
+<td style="text-align: left;">51.4%</td>
+<td style="text-align: left;">68.9%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Min(ES) and p&gt;0.1</td>
+<td style="text-align: left;">327 (28)</td>
+<td style="text-align: left;">3.3%</td>
+<td style="text-align: left;">5.7%</td>
+<td style="text-align: left;">18%</td>
+<td style="text-align: left;">80.7%</td>
+<td style="text-align: left;">89.2%</td>
+<td style="text-align: left;">1.6%</td>
+<td style="text-align: left;">4.2%</td>
+<td style="text-align: left;">14.8%</td>
+<td style="text-align: left;">58.6%</td>
+<td style="text-align: left;">76.9%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Min(ES)</td>
+<td style="text-align: left;">300 (0)</td>
+<td style="text-align: left;">0.1%</td>
+<td style="text-align: left;">0%</td>
+<td style="text-align: left;">1.4%</td>
+<td style="text-align: left;">37.8%</td>
+<td style="text-align: left;">60.7%</td>
+<td style="text-align: left;">1.6%</td>
+<td style="text-align: left;">2.7%</td>
+<td style="text-align: left;">7.2%</td>
+<td style="text-align: left;">61%</td>
+<td style="text-align: left;">71.4%</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>From this simulation we can see that each decision rule has different performance and properties:</p>
+<ul>
+<li>Pocock stopping has the lowest power because of its aggressive stopping for futility, but does allow multiple arms to be dropped resulting in a lower ESS. It also has the lowest rates of harmful (ES=-0.5) or null (ES=0) arms making it to the end of the trial.</li>
+<li>Dropping the smallest effect size in a stage, if <span class="math inline">\(p&gt;\alpha=0.1\)</span>, results in the highest proportions of the best two arms making it to the end of the trial, but it also leads to a slightly higher rate of ES=0.1 making it to the end which results in a larger ESS than we may desire.</li>
+<li>Always dropping the minimum effect size, regardless of significance, but testing each arm based on the available data results in lower power and completion rates for ES=0.4, but does show slightly higher power for ES=0.35. Even though the trial completion rate for ES=0.35 is only 37.8%, this conundrum may be explained by the fact that we allowed for testing across all stages regardless of when it stopped and we may have, by chance, stopped ES=0.35 at the 4th stage when it was significant but if it continued enrollment to stage 5 its p-value increased over 0.025.</li>
+</ul>
+<p>In practice, the choice of dropping rules or strategies will be driven by the context of your particular study and balancing the strengthens and weaknesses across the trial operating characteristics.</p>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<p>Below are some references to highlight based on the slides and code:</p>
+<ul>
+<li><p><a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adaptive-design-clinical-trials-drugs-and-biologics-guidance-industry">FDA Adaptive Design Clinical Trials for Drugs and Biologics Guidance for Industry Guidance Document</a>: FDA guidance document on adaptive trial elements</p></li>
+<li><p><a href="https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/recent-innovations-in-adaptive-trial-designs-a-review-of-design-opportunities-in-translational-research/614EAFEA5E89CA035E82E152AF660E5D?utm_campaign=shareaholic&amp;utm_medium=copy_link&amp;utm_source=bookmark">Recent innovations in adaptive trial designs: A review of design opportunities in translational research</a>: 2023 review paper examining adaptive and novel trial elements with included case studies</p></li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Adaptive Treatment Arm Selection"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="an">toc_float:</span><span class="co"> true</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="an">toc-location:</span><span class="co"> left</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: show</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap </span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, echo = FALSE}</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">message =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">echo =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu"># Overview</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>There may be uncertainty as to which study arms to include in a prospective trial, especially if we have multiple doses to consider, multiple candidate therapies, or potentially limited resources to explore all options. In this module we introduce the adaptive concept of treatment arm dropping and adding.</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu"># Slide Deck</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;iframe</span> <span class="er">class</span><span class="ot">=</span><span class="st">"speakerdeck-iframe"</span> <span class="er">style</span><span class="ot">=</span><span class="st">"border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;"</span> <span class="er">frameborder</span><span class="ot">=</span><span class="st">"0"</span> <span class="er">src</span><span class="ot">=</span><span class="st">"https://speakerdeck.com/player/bebd3fb80cba4dc7a3e5fb6c16608507"</span> <span class="er">title</span><span class="ot">=</span><span class="st">"Adaptive Treatment Arm Selection"</span> <span class="er">allowfullscreen</span><span class="ot">=</span><span class="st">"true"</span> <span class="er">data-ratio</span><span class="ot">=</span><span class="st">"1.7777777777777777"</span><span class="kw">&gt;&lt;/iframe&gt;</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="dv">&amp;nbsp;</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>You can also download the <span class="co">[</span><span class="ot">original PowerPoint file</span><span class="co">](../files/Slides/6_treatment_arm_selection.pptx)</span>.</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="fu"># Code Examples in R</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>Within R there are plenty of packages to implement dose-finding algorithms, which can be thought of as a form of arm dropping:</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="co">[</span><span class="ot">`CRM`</span><span class="co">](https://cran.r-project.org/web/packages/CRM/index.html)</span>: implements the continual reassessment method for phase I clinical trials</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="co">[</span><span class="ot">`bcrm`</span><span class="co">](https://cran.r-project.org/web/packages/bcrm/index.html)</span>: implements a Bayesian version of the CRM</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="co">[</span><span class="ot">`DoseFinding`</span><span class="co">](https://cran.r-project.org/web/packages/DoseFinding/index.html)</span>: provides functions for designing and analyzing dose-finding experiments with a focus on phase II studies</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>For general treatment arm selection, many approaches are custom coded by the user depending on the rules used. </span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="fu"># Simulation Study</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>For a brief simulation study, let's compare the operating characteristics for a set of different arm dropping rules:</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Keep all active arms that are not dropped for futility based on one-sided Pocock stopping boundaries</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Drop the arm with the smallest treatment effect at each stage as long as it is not statistically significant at a more generous $\alpha=0.1$ threshold</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Drop the arm with the smallest treatment effect regardless of statistical significance so the study ends with two arms</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>In our simulation we make the following assumptions:</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>There are six total arms (1 shared control, 5 treatment arms )</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Each arm will enroll 100 if it never stops (i.e., power calculation for two-sample t-test assuming $\alpha=0.05$, $\beta=0.8$, $\delta=0.4$, $\sigma=1$)</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>We will plan for 5 total stages (i.e., 20 per stage) so that the final analysis can end with a control versus winner(s) comparison</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>We assume normally distributed outcomes with $\sigma=1$ for all arms</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>The control group mean response is 0, our 5 treatment arm responses are -0.05, 0, 0.1, 0.35, 0.4 (i.e., worse than control, same as control, three improved relative to control by differing degrees)</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>We will not make any corrections for multiple testing</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>Now let's explore our results for the arms that remain at the end of each study, overall sample size, and the rejection rates:</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="in">```{r arm-selection-sim, cache=T, warning=F}</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpact) <span class="co"># load rpact for futility bounds</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>fo_p1 <span class="ot">&lt;-</span> <span class="fu">getDesignGroupSequential</span>(<span class="at">typeOfDesign =</span> <span class="st">"asUser"</span>, <span class="at">alpha=</span><span class="fl">0.025</span>, <span class="at">userAlphaSpending =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.025</span>), </span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">typeBetaSpending =</span> <span class="st">"bsP"</span>, <span class="co"># Pocock futility boundaries</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">bindingFutility =</span> <span class="cn">FALSE</span>, <span class="at">kMax =</span> <span class="dv">5</span>, <span class="at">sided=</span><span class="dv">1</span>, <span class="at">beta=</span><span class="fl">0.2</span>)</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>fo_p1_crit <span class="ot">&lt;-</span> fo_p1<span class="sc">$</span>futilityBounds <span class="co">#  extract futility boundaries</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>fo_p1_crit_mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">c</span>(fo_p1_crit, <span class="sc">-</span><span class="cn">Inf</span>), <span class="at">ncol=</span><span class="dv">5</span>, <span class="at">nrow=</span><span class="dv">5</span>) <span class="co"># create matrix to compare with test statistics in simulation, add -Inf for final comparison at end of trial</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="co"># set means (m) per study arm</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.05</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>m4 <span class="ot">&lt;-</span> <span class="fl">0.35</span></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>m5 <span class="ot">&lt;-</span> <span class="fl">0.4</span></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a><span class="co"># set other parameters</span></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>sc <span class="ot">&lt;-</span> s1 <span class="ot">&lt;-</span> s2 <span class="ot">&lt;-</span> s3 <span class="ot">&lt;-</span> s4 <span class="ot">&lt;-</span> s5 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># common variance, could change for other scenarios</span></span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>seed <span class="ot">&lt;-</span> <span class="dv">515</span> <span class="co"># seed for reproducibility</span></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>nmax <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># max per arm</span></span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>nstage <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># total number of stages</span></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>n_perstage <span class="ot">&lt;-</span> <span class="fu">ceiling</span>( <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">100</span>,<span class="at">length.out=</span><span class="dv">6</span>)[<span class="sc">-</span><span class="dv">1</span>] ) <span class="co"># number enrolled in each stage (so you can change nmax, nstage, etc. and code still works)</span></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>nsim <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="co"># number of simulations</span></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>strat1_res <span class="ot">&lt;-</span> strat2_res <span class="ot">&lt;-</span> strat3_res <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span>nsim, <span class="at">ncol=</span><span class="dv">11</span>) <span class="co"># create objects to save simulation results</span></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a><span class="co"># simulation</span></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(seed) <span class="co"># set seed for reproducibility</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>( i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nsim ){</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>  <span class="co"># use sapply to create matrix of data with each data set represented by a column</span></span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>  simdat <span class="ot">&lt;-</span> <span class="fu">sapply</span>( <span class="fu">c</span>(<span class="st">'c'</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>), <span class="cf">function</span>(x) <span class="fu">rnorm</span>(<span class="at">mean =</span> <span class="fu">get</span>(<span class="fu">paste0</span>(<span class="st">'m'</span>,x)), <span class="at">sd =</span> <span class="fu">get</span>(<span class="fu">paste0</span>(<span class="st">'s'</span>,x)), <span class="at">n=</span>nmax) ) </span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate two-sample t-tests for what the observed test statistic and p-value would be at each stage</span></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>  <span class="co"># write helper function, paircompare(), to extract this information</span></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>  paircompare <span class="ot">&lt;-</span> <span class="cf">function</span>(arm_control, arm_trt, n_perstage){</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>    <span class="do">### Helper function to calculate test statistic and p-value for two groups given data and sample sizes to use</span></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>    <span class="co"># arm_control/arm_trt: vector with observed data up to max sample size</span></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>    <span class="co"># n_perstage: sample size after each stage</span></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>    tres <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(n_perstage, <span class="cf">function</span>(z) <span class="fu">t.test</span>(arm_trt[<span class="dv">1</span><span class="sc">:</span>z], arm_control[<span class="dv">1</span><span class="sc">:</span>z], <span class="at">alternative =</span> <span class="st">'greater'</span>)[<span class="fu">c</span>(<span class="st">'p.value'</span>,<span class="st">'statistic'</span>)] ))</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>    eres <span class="ot">&lt;-</span> <span class="fu">sapply</span>(n_perstage, <span class="cf">function</span>(z) <span class="fu">mean</span>(arm_trt[<span class="dv">1</span><span class="sc">:</span>z]) <span class="sc">-</span> <span class="fu">mean</span>(arm_control[<span class="dv">1</span><span class="sc">:</span>z] ) )</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>( <span class="fu">cbind</span>(tres, eres) )</span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">sapply</span>( <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, <span class="cf">function</span>(w) <span class="fu">paircompare</span>(<span class="at">arm_control =</span> simdat[,<span class="dv">1</span>], <span class="at">arm_trt =</span> simdat[,w], <span class="at">n_perstage =</span> n_perstage)  )</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>  pval <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(res[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,]) <span class="co"># extract p-values at each stage for control vs. active arm</span></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>  tval <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(res[<span class="dv">6</span><span class="sc">:</span><span class="dv">10</span>,]) <span class="co"># extract t-values at each stage for control vs. active arm</span></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>  diff <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(res[<span class="dv">11</span><span class="sc">:</span><span class="dv">15</span>,]) <span class="co"># extract observed effect size (trt - con) at each stage (one-sided goal with trt &gt; con)</span></span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>  <span class="do">### Strategy 1: Pocock Boundaries</span></span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>  fut_stop <span class="ot">&lt;-</span> (tval <span class="sc">&lt;</span> fo_p1_crit_mat) <span class="co"># calculate if each arm has any test statistics below the futility boundary</span></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>  arm_stop1 <span class="ot">&lt;-</span> <span class="fu">sapply</span>( <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="cf">function</span>(a) <span class="fu">which</span>(fut_stop[,a] <span class="sc">==</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>] )</span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>  arm_stop1[ <span class="fu">is.na</span>(arm_stop1) ] <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># make NA 5 since they never dropped for futility</span></span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>  n_strat1 <span class="ot">&lt;-</span> n_perstage[arm_stop1] <span class="co"># record sample size for each arm</span></span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>  ntot1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(n_strat1) <span class="co"># sum up for total sample size</span></span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>  finish1 <span class="ot">&lt;-</span> arm_stop1<span class="sc">==</span><span class="dv">5</span> <span class="co"># calculate indicator if arm made it to the end</span></span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>  sig1 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="dv">5</span>) <span class="co"># create indicator if significant comparison</span></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>  sig1[ <span class="fu">which</span>(arm_stop1<span class="sc">==</span><span class="dv">5</span>) ] <span class="ot">&lt;-</span> <span class="fu">unlist</span>(pval[,<span class="dv">5</span>])[ <span class="fu">which</span>(arm_stop1<span class="sc">==</span><span class="dv">5</span>) ] <span class="sc">&lt;</span> <span class="fl">0.025</span> <span class="co"># estimate if arm is significant at alpha=0.025</span></span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>  <span class="co"># save results</span></span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>  strat1_res[i,] <span class="ot">&lt;-</span> <span class="fu">c</span>(ntot1, finish1, sig1)</span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>  <span class="do">### Strategy 2: Drop smallest treatment effect arm as long as not significant</span></span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>  diff2 <span class="ot">&lt;-</span> diff <span class="co"># create copy of object to manipulate for decision rule</span></span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>  arm_stop2 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">5</span>,<span class="dv">5</span>) <span class="co"># create object to save when arm stops, assume 5 for all to start</span></span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>( k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span> ){</span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>    armnum <span class="ot">&lt;-</span> <span class="fu">which</span>( <span class="fu">unlist</span>(diff2[k,]) <span class="sc">==</span> <span class="fu">min</span>(<span class="fu">unlist</span>(diff2[k,])) ) <span class="co"># calc arm with min effect size</span></span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>( pval[k,armnum] <span class="sc">&gt;=</span> <span class="fl">0.1</span> ){</span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>      arm_stop2[armnum] <span class="ot">&lt;-</span> k</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>      diff2[,armnum] <span class="ot">&lt;-</span> <span class="cn">Inf</span> <span class="co"># make all observed diffs large to ignore in next stage(s)</span></span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>  n_strat2 <span class="ot">&lt;-</span> n_perstage[arm_stop2] <span class="co"># record sample size for each arm</span></span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>  ntot2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(n_strat2) <span class="co"># sum up for total sample size</span></span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>  finish2 <span class="ot">&lt;-</span> arm_stop2<span class="sc">==</span><span class="dv">5</span> <span class="co"># calculate indicator if arm made it to the end</span></span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>  sig2 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="dv">5</span>) <span class="co"># create indicator if significant comparison</span></span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a>  sig2[ <span class="fu">which</span>(arm_stop2<span class="sc">==</span><span class="dv">5</span>) ] <span class="ot">&lt;-</span> <span class="fu">unlist</span>(pval[,<span class="dv">5</span>])[ <span class="fu">which</span>(arm_stop2<span class="sc">==</span><span class="dv">5</span>) ] <span class="sc">&lt;</span> <span class="fl">0.025</span> <span class="co"># estimate if arm is significant at alpha=0.025</span></span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>  <span class="co"># save results</span></span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>  strat2_res[i,] <span class="ot">&lt;-</span> <span class="fu">c</span>(ntot2, finish2, sig2)</span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a>  <span class="do">### Strategy 3: Drop smallest treatment effect arm regardless of significance</span></span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>  diff3 <span class="ot">&lt;-</span> diff <span class="co"># create copy of object to manipulate for decision rule</span></span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a>  arm_stop3 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">5</span>,<span class="dv">5</span>) <span class="co"># create object to save when arm stops, assume 5 for all to start</span></span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>( k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span> ){</span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>    armnum <span class="ot">&lt;-</span> <span class="fu">which</span>( <span class="fu">unlist</span>(diff3[k,]) <span class="sc">==</span> <span class="fu">min</span>(<span class="fu">unlist</span>(diff3[k,])) ) <span class="co"># calc arm with min effect size</span></span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>    arm_stop3[armnum] <span class="ot">&lt;-</span> k</span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>    diff3[,armnum] <span class="ot">&lt;-</span> <span class="cn">Inf</span> <span class="co"># make all observed diffs large to ignore in next stage(s)</span></span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>  n_strat3 <span class="ot">&lt;-</span> n_perstage[arm_stop3] <span class="co"># record sample size for each arm</span></span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>  ntot3 <span class="ot">&lt;-</span> <span class="fu">sum</span>(n_strat3) <span class="co"># sum up for total sample size</span></span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a>  finish3 <span class="ot">&lt;-</span> arm_stop3<span class="sc">==</span><span class="dv">5</span> <span class="co"># calculate indicator if arm made it to the end</span></span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a>  sig3 <span class="ot">&lt;-</span> <span class="fu">sapply</span>( <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="cf">function</span>(u) pval[ arm_stop3[u], u] <span class="sc">&lt;</span> <span class="fl">0.025</span> ) <span class="co"># create indicator if significant comparison, here we will check each arm regardless of stopping point</span></span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>  <span class="co"># save results</span></span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a>  strat3_res[i,] <span class="ot">&lt;-</span> <span class="fu">c</span>(ntot3, finish3, sig3)</span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a><span class="co"># Format results to display</span></span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a>strat1 <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(strat1_res)</span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>s1_sd <span class="ot">&lt;-</span> <span class="fu">sd</span>( strat1_res[,<span class="dv">1</span>] )</span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>s1res <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="fu">paste0</span>( <span class="fu">round</span>(strat1[<span class="dv">1</span>]),<span class="st">" ("</span>,<span class="fu">round</span>(s1_sd),<span class="st">")"</span>), <span class="fu">paste0</span>( strat1[<span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>]<span class="sc">*</span><span class="dv">100</span>, <span class="st">"%"</span>) )</span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a>strat2 <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(strat2_res)</span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a>s2_sd <span class="ot">&lt;-</span> <span class="fu">sd</span>( strat2_res[,<span class="dv">1</span>] )</span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a>s2res <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="fu">paste0</span>( <span class="fu">round</span>(strat2[<span class="dv">1</span>]),<span class="st">" ("</span>,<span class="fu">round</span>(s2_sd),<span class="st">")"</span>), <span class="fu">paste0</span>( strat2[<span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>]<span class="sc">*</span><span class="dv">100</span>, <span class="st">"%"</span>) )</span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a>strat3 <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(strat3_res)</span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a>s3_sd <span class="ot">&lt;-</span> <span class="fu">sd</span>( strat3_res[,<span class="dv">1</span>] )</span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a>s3res <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="fu">paste0</span>( <span class="fu">round</span>(strat3[<span class="dv">1</span>]),<span class="st">" ("</span>,<span class="fu">round</span>(s3_sd),<span class="st">")"</span>), <span class="fu">paste0</span>( strat3[<span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>]<span class="sc">*</span><span class="dv">100</span>, <span class="st">"%"</span>) )</span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a><span class="co"># Format results</span></span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a>kbl_tab <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="st">'Pocock Futility'</span> <span class="ot">=</span> s1res, <span class="st">'Min(ES) and p&gt;0.1'</span> <span class="ot">=</span> s2res, <span class="st">'Min(ES)'</span> <span class="ot">=</span> s3res)</span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a>kbl_tab <span class="sc">%&gt;%</span></span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">'Dropping Rule'</span>,<span class="st">'ESS (SD)'</span>, <span class="st">'ES=-0.5'</span>, <span class="st">'ES=0'</span>, <span class="st">'ES=0.1'</span>, <span class="st">'ES=0.35'</span>,<span class="st">'ES=0.4'</span>, <span class="st">'ES=-0.5'</span>, <span class="st">'ES=0'</span>, <span class="st">'ES=0.1'</span>, <span class="st">'ES=0.35'</span>,<span class="st">'ES=0.4'</span>) ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_header_above</span>(<span class="fu">c</span>(<span class="st">" "</span><span class="ot">=</span><span class="dv">1</span>, <span class="st">" "</span><span class="ot">=</span><span class="dv">1</span>, <span class="st">"Arm Made to End of Trial"</span><span class="ot">=</span><span class="dv">5</span>, <span class="st">"Arm Rejected Null Hypothesis"</span><span class="ot">=</span><span class="dv">5</span>))</span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a>From this simulation we can see that each decision rule has different performance and properties:</span>
+<span id="cb2-216"><a href="#cb2-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-217"><a href="#cb2-217" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Pocock stopping has the lowest power because of its aggressive stopping for futility, but does allow multiple arms to be dropped resulting in a lower ESS. It also has the lowest rates of harmful (ES=-0.5) or null (ES=0) arms making it to the end of the trial.</span>
+<span id="cb2-218"><a href="#cb2-218" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Dropping the smallest effect size in a stage, if $p&gt;\alpha=0.1$, results in the highest proportions of the best two arms making it to the end of the trial, but it also leads to a slightly higher rate of ES=0.1 making it to the end which results in a larger ESS than we may desire.</span>
+<span id="cb2-219"><a href="#cb2-219" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Always dropping the minimum effect size, regardless of significance, but testing each arm based on the available data results in lower power and completion rates for ES=0.4, but does show slightly higher power for ES=0.35. Even though the trial completion rate for ES=0.35 is only 37.8%, this conundrum may be explained by the fact that we allowed for testing across all stages regardless of when it stopped and we may have, by chance, stopped ES=0.35 at the 4th stage when it was significant but if it continued enrollment to stage 5 its p-value increased over 0.025.</span>
+<span id="cb2-220"><a href="#cb2-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-221"><a href="#cb2-221" aria-hidden="true" tabindex="-1"></a>In practice, the choice of dropping rules or strategies will be driven by the context of your particular study and balancing the strengthens and weaknesses across the trial operating characteristics.</span>
+<span id="cb2-222"><a href="#cb2-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-223"><a href="#cb2-223" aria-hidden="true" tabindex="-1"></a><span class="fu"># References</span></span>
+<span id="cb2-224"><a href="#cb2-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-225"><a href="#cb2-225" aria-hidden="true" tabindex="-1"></a>Below are some references to highlight based on the slides and code:</span>
+<span id="cb2-226"><a href="#cb2-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-227"><a href="#cb2-227" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="co">[</span><span class="ot">FDA Adaptive Design Clinical Trials for Drugs and Biologics Guidance for Industry Guidance Document</span><span class="co">](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adaptive-design-clinical-trials-drugs-and-biologics-guidance-industry)</span>: FDA guidance document on adaptive trial elements</span>
+<span id="cb2-228"><a href="#cb2-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-229"><a href="#cb2-229" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="co">[</span><span class="ot">Recent innovations in adaptive trial designs: A review of design opportunities in translational research</span><span class="co">](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/recent-innovations-in-adaptive-trial-designs-a-review-of-design-opportunities-in-translational-research/614EAFEA5E89CA035E82E152AF660E5D?utm_campaign=shareaholic&amp;utm_medium=copy_link&amp;utm_source=bookmark)</span>: 2023 review paper examining adaptive and novel trial elements with included case studies</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+</body></html>

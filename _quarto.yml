@@ -1,0 +1,58 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Alex Kaizer"
+  site-path: "/adaptivetrials_sc/"
+  navbar:
+    left:
+      - text: "Home"
+        href: index.html
+      - text: "Short Course"
+        menu:
+          - text: "Intro and Welcome"
+            href: 0_intro
+          - text: "Basics of Clinical Trials"
+            href: 1_intro_clinical_trials
+          - text: "Bayesian 101"
+            href: 2_intro_bayesian
+          - text: "Interim Monitoring"
+            href: 3_interim_monitoring
+          - text: "Sample Size Re-Estimation"
+            href: 4_sample_size_reestimation
+          - text: "Adaptive Enrichment"
+            href: 5_adaptive_enrichment
+          - text: "Treatment Arm Selection"
+            href: 6_treatment_arm_selection
+          - text: "Adaptive Randomization"
+            href: 7_adaptive_randomization
+          - text: "Bayesian Information Sharing"
+            href: 8_bayesian_information_sharing
+          - text: "Master Protocols"
+            href: 9_master_protocols
+          - text: "Seamless Designs"
+            href: 10_seamless_designs
+    right:
+      - icon: envelope
+        href: mailto:alex.kaizer@cuanschutz.edu
+      - text: "{{< ai google-scholar size=large >}}" # TERMINAL PROMPT: quarto install extension schochastics/academicons
+        href: https://scholar.google.com/citations?user=ICpH74EAAAAJ&hl=en
+      - icon: github
+        href: http://github.com/alexbiostats
+      - text: "{{< ai cv size=large >}}" # TERMINAL PROMPT: quarto install extension schochastics/academicons
+        href: https://www.alexkaizer.com/files/Alex_CV.pdf
+      - icon: linkedin
+        href: https://www.linkedin.com/in/alex-kaizer/
+format:
+  html:
+    theme: flatly
+    css: styles.css
+    toc: true
+    
+include-in-header:
+  - header.html
+  - header-tracker.html
+
+
+

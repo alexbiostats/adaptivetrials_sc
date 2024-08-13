@@ -1,0 +1,14 @@
+{
+  "hash": "3b6b79cdfbcc3a3a01d8baf29aae3d95",
+  "result": {
+    "markdown": "---\ntitle: \"Seamless Clinical Trial Designs\"\ntoc: true\ntoc_float: true\ntoc-location: left\nformat:\n  html:\n    code-fold: show\n    code-overflow: wrap \n    code-tools: true\n---\n\n::: {.cell}\n\n:::\n\n\n\n# Overview\n\nClinical trials progress through a series of phases to evaluate safety and dose finding (Phase I), preliminary efficacy and further safety profiling (Phase II), and confirmatory efficacy and safety profiling (Phase III). Often we have periods of whitespace between these studies as we wrap one study up and plan for the next. In this module we introduce the concept of seamless designs, where we intentionally write a single study protocol to span multiple stages to reduce the time to evaluate the phases of research.\n\n\n# Slide Deck\n\n<iframe class=\"speakerdeck-iframe\" style=\"border: 0px; background: rgba(0, 0, 0, 0.1) padding-box; margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;\" frameborder=\"0\" src=\"https://speakerdeck.com/player/3454094432fb4971b71e8e61c7be57f1\" title=\"Seamless Trial Designs\" allowfullscreen=\"true\" data-ratio=\"1.7777777777777777\"></iframe>\n\n&nbsp;\n\nYou can also download the [original PowerPoint file](../files/Slides/10_seamless_designs.pptx).\n\n\n# Code Examples in R\n\nThe one R package that comes up for seamless designs is:\n\n* [`asd`](https://cran.r-project.org/web/packages/asd/): runs simulations for adaptive seamless designs with and without early outcomes for treatment selection and subpopulation type designs\n\n\n# References\n\nBelow are some references to highlight based on the slides and code:\n\n* [FDA Adaptive Design Clinical Trials for Drugs and Biologics Guidance for Industry Guidance Document](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adaptive-design-clinical-trials-drugs-and-biologics-guidance-industry): FDA guidance document on adaptive trial elements\n\n* [Recent innovations in adaptive trial designs: A review of design opportunities in translational research](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/recent-innovations-in-adaptive-trial-designs-a-review-of-design-opportunities-in-translational-research/614EAFEA5E89CA035E82E152AF660E5D?utm_campaign=shareaholic&utm_medium=copy_link&utm_source=bookmark): 2023 review paper examining adaptive and novel trial elements with included case studies\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

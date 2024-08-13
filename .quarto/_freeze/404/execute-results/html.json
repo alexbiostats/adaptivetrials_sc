@@ -1,0 +1,14 @@
+{
+  "hash": "4defb1fea7774ce62c835ccc37ccba00",
+  "result": {
+    "markdown": "---\ntitle: \"Page Not Found\"\ntoc: false\nformat:\n  html\n---\n\n\nBaisy the Bayesian pupper thinks you may have specified a bad prior. Try specifying a new prior.\n\n\n::: {.cell layout-align=\"center\"}\n::: {.cell-output-display}\n![](./files/baisy_404.jpg){fig-align='center' width=50%}\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
