@@ -173,7 +173,7 @@ The other useful summary is the `z2=1.19651`, which represents that we need to o
 
 If we assume we enroll the 161 additional participants and observe $Z_2=1.3$, we would have a normal combination test of 
 
-\[ \frac{Z_1 + Z_2}{\sqrt{2}} = \frac{1.6 +1.3}{\sqrt{2}} = 2.05 > 1.96 = Z_{0.975} = Z_{1-\alpha/2} \]
+$$ \frac{Z_1 + Z_2}{\sqrt{2}} = \frac{1.6 +1.3}{\sqrt{2}} = 2.05 > 1.96 = Z_{0.975} = Z_{1-\alpha/2} $$
 
 Therefore, we would reject the null hypothesis and conclude we found an effect.
 
@@ -197,7 +197,7 @@ Given $n=100$ per arm, we would plan for a study enrolling a total of $N_{total}
 We will evaluate five scenarios to determine the effect of sample size re-estimation:
 
 * Scenario 1: Null with $p_1 = p_{trt} = 0.25$ and $p_2 = p_{con} = 0.25$
-* Scenario 2: Null with $p_1 = p_{trt} = 0.175$ and $p_2 = p_{con} = 0.175$, where the null rate is the nuisance parameter (i.e., $\frac{0.1+0.25}{2}=0.175}$)
+* Scenario 2: Null with $p_1 = p_{trt} = 0.175$ and $p_2 = p_{con} = 0.175$, where the null rate is the nuisance parameter (i.e.,$\frac{0.1+0.25}{2}=0.175$)
 * Scenario 3: Alternative with $p_1 = 0.1$ and $p_2 = 0.25$
 * Scenario 4: Alternative with $p_1 = 0.15$ and $p_2 = 0.25$
 * Scenario 5: Alternative with $p_1 = 0.15$ and $p_2 = 0.30$ (i.e., maintaining the $\delta$ but for different effects)

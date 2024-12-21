@@ -461,7 +461,7 @@ Max.    184.0000 194.0000 194.0000 194.0000 194.0000</code></pre>
 <p>The most important summary is the re-estimated sample size of <span class="math inline">\(N=259.0207\)</span> which rounds up to <span class="math inline">\(N=260\)</span>, resulting in a need to enroll <span class="math inline">\(N_2=260-99=161\)</span> in stage 2 instead of the original <span class="math inline">\(N_2 = 198-99=99\)</span>. Overall, this results in a total sample size of <span class="math inline">\(N_1+N_2=99+161=260\)</span>, which is less than the two times inflation allowed by <code>maxinc=2</code> (i.e., up to <span class="math inline">\(198\times2 = 396\)</span> is allowed).</p>
 <p>The other useful summary is the <code>z2=1.19651</code>, which represents that we need to observe a test statistic at least this large for our inverse normal combination test to be significant.</p>
 <p>If we assume we enroll the 161 additional participants and observe <span class="math inline">\(Z_2=1.3\)</span>, we would have a normal combination test of</p>
-<p>[ = = 2.05 &gt; 1.96 = Z_{0.975} = Z_{1-/2} ]</p>
+<p><span class="math display">\[ \frac{Z_1 + Z_2}{\sqrt{2}} = \frac{1.6 +1.3}{\sqrt{2}} = 2.05 &gt; 1.96 = Z_{0.975} = Z_{1-\alpha/2} \]</span></p>
 <p>Therefore, we would reject the null hypothesis and conclude we found an effect.</p>
 </section>
 </section>
@@ -498,7 +498,7 @@ NOTE: n is number in *each* group</code></pre>
 <p>We will evaluate five scenarios to determine the effect of sample size re-estimation:</p>
 <ul>
 <li>Scenario 1: Null with <span class="math inline">\(p_1 = p_{trt} = 0.25\)</span> and <span class="math inline">\(p_2 = p_{con} = 0.25\)</span></li>
-<li>Scenario 2: Null with <span class="math inline">\(p_1 = p_{trt} = 0.175\)</span> and <span class="math inline">\(p_2 = p_{con} = 0.175\)</span>, where the null rate is the nuisance parameter (i.e., <span class="math inline">\(\frac{0.1+0.25}{2}=0.175}\)</span>)</li>
+<li>Scenario 2: Null with <span class="math inline">\(p_1 = p_{trt} = 0.175\)</span> and <span class="math inline">\(p_2 = p_{con} = 0.175\)</span>, where the null rate is the nuisance parameter (i.e.,<span class="math inline">\(\frac{0.1+0.25}{2}=0.175\)</span>)</li>
 <li>Scenario 3: Alternative with <span class="math inline">\(p_1 = 0.1\)</span> and <span class="math inline">\(p_2 = 0.25\)</span></li>
 <li>Scenario 4: Alternative with <span class="math inline">\(p_1 = 0.15\)</span> and <span class="math inline">\(p_2 = 0.25\)</span></li>
 <li>Scenario 5: Alternative with <span class="math inline">\(p_1 = 0.15\)</span> and <span class="math inline">\(p_2 = 0.30\)</span> (i.e., maintaining the <span class="math inline">\(\delta\)</span> but for different effects)</li>
@@ -1538,7 +1538,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb18-183"><a href="#cb18-183" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-184"><a href="#cb18-184" aria-hidden="true" tabindex="-1"></a>If we assume we enroll the 161 additional participants and observe $Z_2=1.3$, we would have a normal combination test of </span>
 <span id="cb18-185"><a href="#cb18-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-186"><a href="#cb18-186" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span> \frac{Z_1 + Z_2}{\sqrt{2}} = \frac{1.6 +1.3}{\sqrt{2}} = 2.05 &gt; 1.96 = Z_{0.975} = Z_{1-\alpha/2} <span class="sc">\]</span></span>
+<span id="cb18-186"><a href="#cb18-186" aria-hidden="true" tabindex="-1"></a>$$ \frac{Z_1 + Z_2}{\sqrt{2}} = \frac{1.6 +1.3}{\sqrt{2}} = 2.05 &gt; 1.96 = Z_{0.975} = Z_{1-\alpha/2} $$</span>
 <span id="cb18-187"><a href="#cb18-187" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-188"><a href="#cb18-188" aria-hidden="true" tabindex="-1"></a>Therefore, we would reject the null hypothesis and conclude we found an effect.</span>
 <span id="cb18-189"><a href="#cb18-189" aria-hidden="true" tabindex="-1"></a></span>
@@ -1562,7 +1562,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb18-209"><a href="#cb18-209" aria-hidden="true" tabindex="-1"></a>We will evaluate five scenarios to determine the effect of sample size re-estimation:</span>
 <span id="cb18-210"><a href="#cb18-210" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-211"><a href="#cb18-211" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Scenario 1: Null with $p_1 = p_{trt} = 0.25$ and $p_2 = p_{con} = 0.25$</span>
-<span id="cb18-212"><a href="#cb18-212" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Scenario 2: Null with $p_1 = p_{trt} = 0.175$ and $p_2 = p_{con} = 0.175$, where the null rate is the nuisance parameter (i.e., $\frac{0.1+0.25}{2}=0.175}$)</span>
+<span id="cb18-212"><a href="#cb18-212" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Scenario 2: Null with $p_1 = p_{trt} = 0.175$ and $p_2 = p_{con} = 0.175$, where the null rate is the nuisance parameter (i.e.,$\frac{0.1+0.25}{2}=0.175$)</span>
 <span id="cb18-213"><a href="#cb18-213" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Scenario 3: Alternative with $p_1 = 0.1$ and $p_2 = 0.25$</span>
 <span id="cb18-214"><a href="#cb18-214" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Scenario 4: Alternative with $p_1 = 0.15$ and $p_2 = 0.25$</span>
 <span id="cb18-215"><a href="#cb18-215" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Scenario 5: Alternative with $p_1 = 0.15$ and $p_2 = 0.30$ (i.e., maintaining the $\delta$ but for different effects)</span>
